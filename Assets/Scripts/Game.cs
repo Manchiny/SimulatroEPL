@@ -67,6 +67,17 @@ namespace SimulatorEPL
                 || anotherGame.teamAway.Id == teamHome.Id || anotherGame.teamAway.Id == teamAway.Id;
         }
 
+        public GameResult GetGameResultForSide(GameSide side)
+        {
+            if (Score.away == Score.home)
+                return GameResult.Draw;
+
+            if (side == GameSide.Home)
+                return Score.home > Score.away ? GameResult.Win : GameResult.Loose;
+
+            return Score.away > Score.home ? GameResult.Win : GameResult.Loose;
+        }
+
         private void AddNextStepScoredTeamOrNull()
         {
             if (nextStepsScoredTeams.Count > 0 && nextStepsScoredTeams.Peek() != null)
@@ -98,7 +109,7 @@ namespace SimulatorEPL
                 Score = new Score(Score.home, Score.away + 1);
 
             Messenger<Game>.Broadcast(AppEvent.ScoreChanged, this);
-            Messenger<Team>.Broadcast(AppEvent.TeamGoaled, scoredTeam);
+            Messenger<Game, Team>.Broadcast(AppEvent.TeamGoaled, this, scoredTeam);
         }
 
         private void RecalculateCoefs()

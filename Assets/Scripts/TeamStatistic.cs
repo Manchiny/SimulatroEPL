@@ -1,12 +1,34 @@
+using System;
+
 namespace SimulatorEPL
 {
     public class TeamStatistic
     {
         public readonly Team team;
 
-        public TeamStatistic(Team team)
+        private int place;
+
+        public TeamStatistic(Team team, int place)
         {
             this.team = team;
+            Place = place;
+        }
+
+        public event Action GoalsChanged;
+        public event Action PlaceChanged;
+        public event Action GamesChanged;
+
+        public int Place 
+        {
+            get => place;
+            set
+            {
+                if (value == place)
+                    return;
+
+                place = value;
+                PlaceChanged?.Invoke();
+            }
         }
 
         public int GamesCount { get; private set; }
@@ -21,10 +43,14 @@ namespace SimulatorEPL
         public int GoalsDelta => Goals - MissedGoals;
         public int SeasonScore => WinsCount * 3 + DrawsCount * 1;
 
-        public void AddResult(GameResult result, int goals, int missedGoals) 
+        public void OnGameStarted()
         {
             GamesCount++;
+            GamesChanged?.Invoke();
+        }
 
+        public void OnGameFinished(GameResult result)
+        {
             if (result == GameResult.Win)
                 WinsCount++;
             else if (result == GameResult.Loose)
@@ -32,8 +58,19 @@ namespace SimulatorEPL
             else
                 DrawsCount++;
 
-            Goals += goals;
-            MissedGoals += missedGoals;
+            GamesChanged?.Invoke();
+        }
+
+        public void OnGoal()
+        {
+            Goals++;
+            GoalsChanged?.Invoke();
+        }
+
+        public void OnMissedGoal()
+        {
+            MissedGoals++;
+            GoalsChanged?.Invoke();
         }
     }
 }
