@@ -11,6 +11,6 @@ namespace SimulatorEPL.Events
         public const string GameStarted = nameof(GameStarted);
         public const string GameFinished = nameof(GameFinished);
 
-        public const string AfterThreetStepsGoalCalculated = nameof(AfterThreetStepsGoalCalculated);
+        public const string GoalSoonCalculated = nameof(GoalSoonCalculated);
     }
 }

@@ -20,7 +20,7 @@ namespace SimulatorEPL
             this.teamAway = teamAway;
 
             for (int i = 0; i < 3; i++)
-                nextStepsScoredTeams.Enqueue(AddNextStepScoredTeamOrNull());
+                AddNextStepScoredTeamOrNull();
         }
 
         public event Action<int> GameTimeChanged;
@@ -49,8 +49,6 @@ namespace SimulatorEPL
 
         public void SimulateMinute()
         {
-            // TODO: просчитывать и следующее событие тоже. И записывать его. Если будет гол - показывать три стрелки
-            
             Team scoredTeam = nextStepsScoredTeams.Dequeue();
 
             if (scoredTeam != null)
@@ -66,8 +64,14 @@ namespace SimulatorEPL
                 || anotherGame.teamAway.Id == teamHome.Id || anotherGame.teamAway.Id == teamAway.Id;
         }
 
-        private Team AddNextStepScoredTeamOrNull()
+        private void AddNextStepScoredTeamOrNull()
         {
+            if (nextStepsScoredTeams.Count > 0 && nextStepsScoredTeams.Peek() != null)
+            {
+                nextStepsScoredTeams.Enqueue(null);
+                return;
+            }
+
             int randomTeamId = Random.Range(0, 2);
             Team team = randomTeamId == 0 ? teamHome : teamAway;
 
@@ -76,12 +80,11 @@ namespace SimulatorEPL
             if (hasGoal)
             {
                 nextStepsScoredTeams.Enqueue(team);
-                Messenger<Game, Team>.Broadcast(AppEvent.AfterThreetStepsGoalCalculated, this, team);
-                return team;
+                Messenger<Game, Team>.Broadcast(AppEvent.GoalSoonCalculated, this, team);
+                return;
             }
 
             nextStepsScoredTeams.Enqueue(null);
-            return null;
         }
 
         private void AddScore(Team scoredTeam)

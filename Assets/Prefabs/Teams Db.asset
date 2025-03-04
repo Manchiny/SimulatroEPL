@@ -19,8 +19,6 @@ MonoBehaviour:
     icon: {fileID: 0}
   - title: Team 3
     icon: {fileID: 0}
-  - title: Team 3
-    icon: {fileID: 0}
   - title: Team 4
     icon: {fileID: 0}
   - title: Team 5
@@ -30,4 +28,28 @@ MonoBehaviour:
   - title: Team 7
     icon: {fileID: 0}
   - title: Team 8
+    icon: {fileID: 0}
+  - title: Team 9
+    icon: {fileID: 0}
+  - title: Team 10
+    icon: {fileID: 0}
+  - title: Team 11
+    icon: {fileID: 0}
+  - title: Team 12
+    icon: {fileID: 0}
+  - title: Team 13
+    icon: {fileID: 0}
+  - title: Team 14
+    icon: {fileID: 0}
+  - title: Team 15
+    icon: {fileID: 0}
+  - title: Team 16
+    icon: {fileID: 0}
+  - title: Team 17
+    icon: {fileID: 0}
+  - title: Team 18
+    icon: {fileID: 0}
+  - title: Team 19
+    icon: {fileID: 0}
+  - title: Team 20
     icon: {fileID: 0}
