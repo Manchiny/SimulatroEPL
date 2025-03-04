@@ -37,9 +37,11 @@ namespace SimulatorEPL.UI
                 return;
             }
 
-            if (!force && targetAttackSide.HasValue && targetAttackSide != GameSide.None && 3 - Mathf.Abs(currentAttackLevel) < 0)
+            if (!force && targetAttackSide.HasValue && targetAttackSide != GameSide.None )
             {
-                currentAttackLevel = 0;
+                if ((targetAttackSide.Value == GameSide.Home && currentAttackLevel < 0) || (targetAttackSide.Value == GameSide.Away && currentAttackLevel > 0))
+                    currentAttackLevel = 0;
+
                 AddAttackValue(targetAttackSide.Value);
             }
         }

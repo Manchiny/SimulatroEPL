@@ -19,6 +19,8 @@ namespace SimulatorEPL
             this.teamHome = teamHome;
             this.teamAway = teamAway;
 
+            RecalculateCoefs();
+
             for (int i = 0; i < 3; i++)
                 AddNextStepScoredTeamOrNull();
         }
@@ -55,6 +57,7 @@ namespace SimulatorEPL
                 AddScore(scoredTeam);
 
             AddNextStepScoredTeamOrNull();
+            RecalculateCoefs();
             GameTime++;
         }
 
@@ -96,6 +99,22 @@ namespace SimulatorEPL
 
             Messenger<Game>.Broadcast(AppEvent.ScoreChanged, this);
             Messenger<Team>.Broadcast(AppEvent.TeamGoaled, scoredTeam);
+        }
+
+        private void RecalculateCoefs()
+        {
+            float winHome = Random.Range(0.01f, 4);
+            float winAway = Random.Range(0.01f, 4);
+            float draw = Random.Range(0.01f, 4);
+
+            float handicapHome = Random.Range(0.01f, 4);
+            float handicapAway = Random.Range(0.01f, 4);
+
+            float totalMore = Random.Range(0.01f, 4);
+            float totalLess = Random.Range(0.01f, 4);
+
+            Coefs = new GameCoefs(winHome, winAway, draw, handicapHome, handicapAway, totalMore, totalLess);
+            Messenger<Game, GameCoefs>.Broadcast(AppEvent.CoefsChanged, this, Coefs);
         }
     }
 }

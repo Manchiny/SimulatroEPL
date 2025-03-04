@@ -35,6 +35,7 @@ namespace SimulatorEPL.UI
 
             Messenger<Game>.AddListener(AppEvent.ScoreChanged, OnScoreChanged);
             Messenger<Game, Team>.AddListener(AppEvent.GoalSoonCalculated, OnGoalSoonCalculated);
+            Messenger<Game, GameCoefs>.AddListener(AppEvent.CoefsChanged, OnGameCoefsChanged);
 
             game.GameTimeChanged += OnGameTimeChanged;
         }
@@ -52,6 +53,7 @@ namespace SimulatorEPL.UI
 
             Messenger<Game>.RemoveListener(AppEvent.ScoreChanged, OnScoreChanged);
             Messenger<Game, Team>.RemoveListener(AppEvent.GoalSoonCalculated, OnGoalSoonCalculated);
+            Messenger<Game, GameCoefs>.RemoveListener(AppEvent.CoefsChanged, OnGameCoefsChanged);
         }
 
         private void OnGameTimeChanged(int time)
@@ -80,6 +82,14 @@ namespace SimulatorEPL.UI
 
             GameSide attackSide = goaledTeam == game.teamHome ? GameSide.Home : GameSide.Away;
             attackNotifier.SetTargetAttackSide(attackSide, force: false);
+        }
+
+        private void OnGameCoefsChanged(Game game, GameCoefs coefs)
+        {
+            if (game != Game)
+                return;
+
+            coefsView.SetGameCoef(coefs);
         }
     }
 }
