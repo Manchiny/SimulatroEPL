@@ -1,6 +1,8 @@
 using SimulatorEPL.Events;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace SimulatorEPL
@@ -32,7 +34,7 @@ namespace SimulatorEPL
         public int CurrentTime
         {
             get => gameTime;
-            set
+            private set
             {
                 if (value < 0)
                     return;
@@ -137,42 +139,45 @@ namespace SimulatorEPL
                 else
                     draw += score.prob;
 
-                if (score.home + score.away < (int)(avg1 + avg2) + 0.5)
+                if (score.home + score.away < (int)(avg1 + avg2) + 0.5f)
                     totalSmallUnder += score.prob;
-                if (score.home + score.away < (int)(avg1 + avg2) + 1.5)
+                if (score.home + score.away < (int)(avg1 + avg2) + 1.5f)
                     totalBigUnder += score.prob;
 
                 if (avg1 >= avg2)
                 {
-                    if (score.home - 1.5 > score.away)
+                    if (score.home - 1.5f > score.away)
                         handyHome += score.prob;
                     else
                         handyAway += score.prob;
                 }
                 else
                 {
-                    if (score.away - 1.5 > score.home)
+                    if (score.away - 1.5f > score.home)
                         handyHome += 1 - score.prob;
                     else
                         handyAway += 1 - score.prob;
                 }
             }
 
-            double totalSmallOver = 1 - totalSmallUnder;
-            double totalBigOver = 1 - totalBigUnder;
+            double totalSmallOver = 1f - totalSmallUnder;
+            double totalBigOver = 1f - totalBigUnder;
 
             double nextScoreHome = (teamHome.Power + AppConstants.HomeAdvantageCoef) / (teamHome.Power + teamAway.Power);
             double nextScoreAway = (teamAway.Power - AppConstants.HomeAdvantageCoef) / (teamHome.Power + teamAway.Power);
 
             Coefs = new MatchCoefs(
-                winHome: winHome, winAway: winAway, draw: draw, 
-                handyHome: handyHome, handyAway: handyAway, 
-                nextScoreHome: nextScoreHome, 
-                nextScoreAway: nextScoreAway,
-                totalSmallUnder: totalSmallUnder,
-                totalSmallOver: totalSmallOver,
-                totalBigUnder: totalBigUnder,
-                totalBigOver: totalBigOver,
+                winHome: 0.95f / winHome, 
+                winAway: 0.95f / winAway, 
+                draw: 0.95f / draw, 
+                handyHome: 0.95f / handyHome, 
+                handyAway: 0.95f / handyAway, 
+                nextScoreHome: 0.95f / nextScoreHome, 
+                nextScoreAway: 0.95f / nextScoreAway,
+                totalSmallUnder: 0.95f / totalSmallUnder,
+                totalSmallOver: 0.95f / totalSmallOver,
+                totalBigUnder: 0.95f / totalBigUnder,
+                totalBigOver: 0.95f / totalBigOver,
                 totalSmallAdv: totalSmallAdv);
 
             Messenger<Match, MatchCoefs>.Broadcast(AppEvent.CoefsChanged, this, Coefs);
@@ -186,7 +191,7 @@ namespace SimulatorEPL
             double drawScoreProb = 1f - teamHome.Power - teamAway.Power;
             int drawScore = MinutesRemaining - homeToScore - awayToScore + Score.home + Score.away;
 
-            int binomialCoef = Factorial(MinutesRemaining) / (Factorial(homeToScore - Score.home) * Factorial(awayToScore - Score.away) * Factorial(drawScore));
+            double binomialCoef = (double)(Factorial(MinutesRemaining) / (Factorial(homeToScore - Score.home) * Factorial(awayToScore - Score.away) * Factorial(drawScore)));
 
             double probability = binomialCoef
                 * Math.Pow(teamHome.Power + AppConstants.HomeAdvantageCoef, homeToScore - Score.home)
@@ -196,7 +201,7 @@ namespace SimulatorEPL
             return probability;
         }
 
-        private int Factorial(int n)
+        private BigInteger Factorial(int n)
         {
             if (n <= 0)
                 return 1;

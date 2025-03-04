@@ -48,18 +48,17 @@ namespace SimulatorEPL.UI
             nextScoreHome.text = GetCoefString(coefs.nextScoreHome);
             nextScoreAway.text = GetCoefString(coefs.nextScoreAway);
 
-            totalSmallAdv.text = GetCoefString(coefs.TotalSmallAdv);
+            totalSmallAdv.text = coefs.TotalSmallAdv.ToString("N1");
             totalSmallUnder.text = GetCoefString(coefs.totalSmallUnder);
             totalSmallOver.text = GetCoefString(coefs.totalSmallOver);
 
-            totalBigAdv.text = GetCoefString(coefs.TotalBigAdv);
+            totalBigAdv.text = coefs.TotalBigAdv.ToString("N1");
             totalBigOver.text = GetCoefString(coefs.totalBigOver);
             totalBigUnder.text = GetCoefString(coefs.totalBigUnder);
         }
 
         private string GetCoefString(double coef)
         {
-            return coef.ToString("N2");
             return (coef <= 1 || coef > 20) ? "-" : coef.ToString("N2");
         }
     }
