@@ -1,3 +1,4 @@
+using SimulatorEPL.Events;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -44,6 +45,25 @@ namespace SimulatorEPL.UI
 
                 AddAttackValue(targetAttackSide.Value);
             }
+        }
+
+        private void Awake()
+        {
+            Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnGameStateChanged);
+        }
+
+        private void OnDestroy()
+        {
+            Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnGameStateChanged);
+        }
+
+        private void OnGameStateChanged(RoundState state)
+        {
+            if (state == RoundState.FirstTime || state == RoundState.SecondTime)
+                return;
+
+            currentAttackLevel = 0;
+            UpdateView();
         }
 
         private void AddAttackValue(GameSide attackSide)

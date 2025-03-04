@@ -11,11 +11,11 @@ namespace SimulatorEPL
         [SerializeField]
         private TeamsDb teamsDb;
 
-        private const int gamesInRoundCount = 10;
+        private const int matchesInRoundCount = 10;
 
         private readonly WaitForSeconds waitSecond = new WaitForSeconds(1f);
 
-        private readonly Queue<Match> currentGames = new Queue<Match>();
+        private readonly Queue<Match> currentMatches = new Queue<Match>();
         private readonly Queue<Match> nextMatches = new Queue<Match>();
 
         private void Start()
@@ -71,12 +71,14 @@ namespace SimulatorEPL
 
         private void AddNewRoundGames()
         {
-            for (int i = 0; i < gamesInRoundCount; i++)
+            for (int i = 0; i < matchesInRoundCount; i++)
                 TryAddCurrentMatch();
         }
 
         private IEnumerator SimulateNewRound()
         {
+            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.FirstTime);
+
             AddNewRoundGames();
             int counter = AppConstants.GameDurationSeconds;
 
@@ -84,16 +86,29 @@ namespace SimulatorEPL
             {
                 counter--;
 
-                foreach (var game in currentGames)
+                foreach (var game in currentMatches)
                     game.SimulateMinute();
 
-                yield return waitSecond;
+                if (counter == AppConstants.GameDurationSeconds / 2)
+                {
+                    Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.HalfTime);
+
+                    for (int i = 0; i < 5; i++)
+                        yield return waitSecond;
+
+                    Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.SecondTime);
+                }
+                else
+                {
+                    yield return waitSecond;
+                }
             }
 
-            while (currentGames.Count > 0)
+            while (currentMatches.Count > 0)
             {
-                var game = currentGames.Dequeue();
-                Messenger<Match>.Broadcast(AppEvent.MatchFinished, game);
+                var match = currentMatches.Dequeue();
+                match.Finish();
+                Messenger<Match>.Broadcast(AppEvent.MatchFinished, match);
             }
 
             yield return null;
@@ -107,16 +122,20 @@ namespace SimulatorEPL
 
         private IEnumerator ShowTimeOut()
         {
+            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.FullTime);
+
             int timer = 5;
 
             while (timer > 0)
             {
-                Debug.Log("Pause: " + timer);
                 yield return waitSecond;
                 timer--;
             }
 
             yield return null;
+            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.None);
+            yield return null;
+
             StartCoroutine(SimulateNewRound());
         }
 
@@ -128,7 +147,7 @@ namespace SimulatorEPL
             var game = nextMatches.Dequeue();
             Messenger<Match>.Broadcast(AppEvent.MatchNextRemoved, game);
 
-            currentGames.Enqueue(game);
+            currentMatches.Enqueue(game);
             Messenger<Match>.Broadcast(AppEvent.MatchStarted, game);
         }
     }

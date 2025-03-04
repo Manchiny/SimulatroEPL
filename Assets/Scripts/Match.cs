@@ -65,6 +65,12 @@ namespace SimulatorEPL
             CurrentTime++;
         }
 
+        public void Finish()
+        {
+            CurrentTime = AppConstants.GameDurationSeconds;
+            RecalculateCoefs();
+        }
+
         public MatchResult GetGameResultForSide(GameSide side)
         {
             if (Score.away == Score.home)
@@ -154,9 +160,9 @@ namespace SimulatorEPL
                 else
                 {
                     if (score.away - 1.5f > score.home)
-                        handyHome += 1 - score.prob;
+                        handyHome += 1f - score.prob;
                     else
-                        handyAway += 1 - score.prob;
+                        handyAway += 1f - score.prob;
                 }
             }
 
@@ -170,14 +176,19 @@ namespace SimulatorEPL
                 winHome: 0.95f / winHome, 
                 winAway: 0.95f / winAway, 
                 draw: 0.95f / draw, 
+
                 handyHome: 0.95f / handyHome, 
-                handyAway: 0.95f / handyAway, 
-                nextScoreHome: 0.95f / nextScoreHome, 
-                nextScoreAway: 0.95f / nextScoreAway,
+                handyAway: 0.95f / handyAway,
+
+                nextScoreHome: MinutesRemaining > 0 ? 0.95f / nextScoreHome : 0f,
+                nextScoreAway: MinutesRemaining > 0 ? 0.95f / nextScoreAway : 0f,
+
                 totalSmallUnder: 0.95f / totalSmallUnder,
                 totalSmallOver: 0.95f / totalSmallOver,
+
                 totalBigUnder: 0.95f / totalBigUnder,
                 totalBigOver: 0.95f / totalBigOver,
+
                 totalSmallAdv: totalSmallAdv);
 
             Messenger<Match, MatchCoefs>.Broadcast(AppEvent.CoefsChanged, this, Coefs);

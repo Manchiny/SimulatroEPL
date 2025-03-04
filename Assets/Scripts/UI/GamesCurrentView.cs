@@ -1,4 +1,5 @@
 using SimulatorEPL.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,14 +17,14 @@ namespace SimulatorEPL.UI
 
         private void Awake()
         {
+            Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
             Messenger<Match>.AddListener(AppEvent.MatchStarted, OnGameStarted);
-            Messenger<Match>.AddListener(AppEvent.MatchFinished, OnGameFinished);
         }
 
         private void OnDestroy()
         {
+            Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
             Messenger<Match>.RemoveListener(AppEvent.MatchStarted, OnGameStarted);
-            Messenger<Match>.RemoveListener(AppEvent.MatchFinished, OnGameFinished);
         }
 
         private void OnGameStarted(Match game)
@@ -34,15 +35,15 @@ namespace SimulatorEPL.UI
             view.SetIsStarted(true);
         }
 
-        private void OnGameFinished(Match game)
+        private void OnRoundStateChanged(RoundState state)
         {
-            var view = gameViews.FirstOrDefault(view => view.Match == game);
-
-            if (!view)
+            if (state != RoundState.None)
                 return;
 
-            Destroy(view.gameObject);
-            gameViews.Remove(view);
+            foreach (var view in gameViews)
+                Destroy(view.gameObject);
+
+            gameViews.Clear();
         }
     }
 }
