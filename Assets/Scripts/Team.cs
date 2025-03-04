@@ -10,9 +10,12 @@ namespace SimulatorEPL
         private string title;
         [SerializeField]
         private Sprite icon;
+        [SerializeField]
+        private float power;
 
         public string Id => title;
         public string Title => title;
         public Sprite Icon => icon;
+        public float Power => power;
     }
 }

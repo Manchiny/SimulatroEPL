@@ -13,43 +13,63 @@ MonoBehaviour:
   m_Name: Teams Db
   m_EditorClassIdentifier: 
   teams:
-  - title: Team 1
+  - title: Liverpool FC
     icon: {fileID: 0}
-  - title: Team 2
+    power: 0.02
+  - title: Arsenal FC
     icon: {fileID: 0}
-  - title: Team 3
+    power: 0.01923
+  - title: Manchester City
     icon: {fileID: 0}
-  - title: Team 4
+    power: 0.01893
+  - title: Chelsea FC
     icon: {fileID: 0}
-  - title: Team 5
+    power: 0.0163
+  - title: Newcastle United
     icon: {fileID: 0}
-  - title: Team 6
+    power: 0.0162
+  - title: AFC Bournemouth
     icon: {fileID: 0}
-  - title: Team 7
+    power: 0.01562
+  - title: Crystal Palace
     icon: {fileID: 0}
-  - title: Team 8
+    power: 0.0156
+  - title: Tottenham Hotspur
     icon: {fileID: 0}
-  - title: Team 9
+    power: 0.01557
+  - title: Brighton & Hove Albion
     icon: {fileID: 0}
-  - title: Team 10
+    power: 0.01547
+  - title: Aston Villa
     icon: {fileID: 0}
-  - title: Team 11
+    power: 0.01547
+  - title: Nottingham Forest
     icon: {fileID: 0}
-  - title: Team 12
+    power: 0.01537
+  - title: Fulham FC
     icon: {fileID: 0}
-  - title: Team 13
+    power: 0.015
+  - title: Brentford FC
     icon: {fileID: 0}
-  - title: Team 14
+    power: 0.01473
+  - title: Manchester United
     icon: {fileID: 0}
-  - title: Team 15
+    power: 0.0146
+  - title: Everton FC
     icon: {fileID: 0}
-  - title: Team 16
+    power: 0.01448
+  - title: West Ham United
     icon: {fileID: 0}
-  - title: Team 17
+    power: 0.01412
+  - title: Wolverhampton Wanderers
     icon: {fileID: 0}
-  - title: Team 18
+    power: 0.0133
+  - title: Ipswich Town
     icon: {fileID: 0}
-  - title: Team 19
+    power: 0.0111
+  - title: Leicester City
     icon: {fileID: 0}
-  - title: Team 20
+    power: 0.01072
+  - title: Southampton FC
     icon: {fileID: 0}
+    power: 0.01

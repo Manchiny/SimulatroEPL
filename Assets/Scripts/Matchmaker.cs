@@ -1,6 +1,7 @@
 using SimulatorEPL.Events;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SimulatorEPL
@@ -10,13 +11,12 @@ namespace SimulatorEPL
         [SerializeField]
         private TeamsDb teamsDb;
 
-        private const int teamsInGroupCount = 4;
-        private const int gamesInRoundCount = 6;
+        private const int gamesInRoundCount = 10;
 
         private readonly WaitForSeconds waitSecond = new WaitForSeconds(1f);
 
-        private readonly Queue<Game> currentGames = new Queue<Game>();
-        private readonly Queue<Game> nextGames = new Queue<Game>();
+        private readonly Queue<Match> currentGames = new Queue<Match>();
+        private readonly Queue<Match> nextMatches = new Queue<Match>();
 
         private void Start()
         {
@@ -26,78 +26,58 @@ namespace SimulatorEPL
 
         private void Init()
         {
-            GenerateShedule();
+            GenerateSeasonMatches(teamsDb.Teams);
         }
 
-        private void GenerateShedule()
+        private void GenerateSeasonMatches(IReadOnlyList<Team> teams)
         {
-            List<Team> sortedTeams = new List<Team>(teamsDb.Teams);
+            var seasonMatches = new Dictionary<int, List<Match>>();
 
-            for (int i = 0; i < sortedTeams.Count - 1; i++)
+            int halfMatches = teams.Count / 2;
+
+            List<Team> homeTeams = teams.Take(halfMatches).ToList();
+            List<Team> awayTeams = teams.Skip(halfMatches).ToList();
+
+            for (int i = 0; i < teams.Count - 1; i++)
             {
-                int id = Random.Range(i + 1, sortedTeams.Count);
-                var tempGame = sortedTeams[id];
+                seasonMatches[i] = new List<Match>();
+                seasonMatches[teams.Count + i] = new List<Match>();
 
-                sortedTeams[id] = sortedTeams[i];
-                sortedTeams[i] = tempGame;
+                for (int j = 0; j < halfMatches; j++)
+                {
+                    seasonMatches[i].Add(new Match(homeTeams[j], awayTeams[j]));
+                    seasonMatches[teams.Count + i].Add(new Match(awayTeams[j], homeTeams[j]));
+                }
+
+                Team pop = homeTeams.Last();
+
+                homeTeams = new List<Team> { homeTeams[0], awayTeams[0] }.Concat(homeTeams.Skip(1).Take(homeTeams.Count - 2)).ToList(); ;
+
+                awayTeams = awayTeams.Skip(1).ToList();
+                awayTeams.Add(pop);
             }
 
-            //int groupsCount = sortedTeams.Count / teamsInGroupCount;
-            //List<List<Team>> teamGroups = new List<List<Team>>();
-            //int teamsCounter = 0;
-
-            //for (int i = 0; i < groupsCount; i++)
-            //{
-            //    List<Team> group = new List<Team>();
-
-            //    for (int j = 0; j < teamsInGroupCount; j++)
-            //    {
-            //        group.Add(sortedTeams[teamsCounter]);
-            //        teamsCounter++;
-            //    }
-
-            //    teamGroups.Add(group);
-            //}
-
-            List<Game> games = new List<Game>();
-
-            for (int i = 0; i < sortedTeams.Count; i++) // TODO: Нормальный алгоритм 
+            foreach (var pair in seasonMatches)
             {
-                Team home = sortedTeams[i];
-                List<Team> availableTeams = new List<Team>(sortedTeams);
-                availableTeams.Remove(home);
+                List<Match> matches = pair.Value;
 
-                for (int j = 0; j < 8; j++)
+                foreach (var match in matches)
                 {
-                    int random = Random.Range(0, availableTeams.Count);
-                    Team away = availableTeams[random];
-                    availableTeams.Remove(away);
-
-                    Game game = new Game(home, away);
-                    games.Add(game);
+                    nextMatches.Enqueue(match);
+                    Messenger<Match>.Broadcast(AppEvent.MatchNextAdded, match);
                 }
             }
-
-            foreach (var game in games)
-            {
-                nextGames.Enqueue(game);
-                Messenger<Game>.Broadcast(AppEvent.GameNextAdded, game);
-            }
-
-            Debug.Log("Sheldure games count: " + games.Count);
         }
 
         private void AddNewRoundGames()
         {
             for (int i = 0; i < gamesInRoundCount; i++)
-                TryAddCurrentGame();
+                TryAddCurrentMatch();
         }
 
         private IEnumerator SimulateNewRound()
         {
             AddNewRoundGames();
-            Debug.Log("Round started. Games: " + currentGames.Count);
-
             int counter = AppConstants.GameDurationSeconds;
 
             while (counter > 0)
@@ -113,13 +93,13 @@ namespace SimulatorEPL
             while (currentGames.Count > 0)
             {
                 var game = currentGames.Dequeue();
-                Messenger<Game>.Broadcast(AppEvent.GameFinished, game);
+                Messenger<Match>.Broadcast(AppEvent.MatchFinished, game);
             }
 
             yield return null;
             Debug.Log("Games finished");
 
-            if (nextGames.Count > 0)
+            if (nextMatches.Count > 0)
                 StartCoroutine(ShowTimeOut());
             else
                 Debug.Log("All games finished");
@@ -140,18 +120,16 @@ namespace SimulatorEPL
             StartCoroutine(SimulateNewRound());
         }
 
-        private void TryAddCurrentGame()
+        private void TryAddCurrentMatch()
         {
-            if (nextGames.Count > 0)
-            {
-                var game = nextGames.Dequeue();
-                Messenger<Game>.Broadcast(AppEvent.GameNextRemoved, game);
+            if (nextMatches.Count <= 0)
+                return;
 
-                currentGames.Enqueue(game);
-                Messenger<Game>.Broadcast(AppEvent.GameStarted, game);
-                Debug.Log(game.ToString() + " Started");
-            }
+            var game = nextMatches.Dequeue();
+            Messenger<Match>.Broadcast(AppEvent.MatchNextRemoved, game);
+
+            currentGames.Enqueue(game);
+            Messenger<Match>.Broadcast(AppEvent.MatchStarted, game);
         }
-
     }
 }

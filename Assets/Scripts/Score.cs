@@ -5,10 +5,14 @@ namespace SimulatorEPL
         public readonly int home;
         public readonly int away;
 
-        public Score(int home, int away)
+        public readonly double prob;
+
+        public Score(int home, int away, double prob = 0)
         {
             this.home = home;
             this.away = away;
+
+            this.prob = prob;
         }
 
         public override string ToString()

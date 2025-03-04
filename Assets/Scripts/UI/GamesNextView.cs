@@ -1,5 +1,4 @@
 using SimulatorEPL.Events;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,39 +10,39 @@ namespace SimulatorEPL.UI
         [SerializeField]
         private RectTransform viewsHolder;
         [SerializeField]
-        private GameView gameViewPrefab;
+        private MatchView matchViewPrefab;
 
-        private readonly List<GameView> gameViews = new List<GameView>();
+        private readonly List<MatchView> matchViews = new List<MatchView>();
 
         private void Awake()
         {
-            Messenger<Game>.AddListener(AppEvent.GameNextAdded, OnGameAdded);
-            Messenger<Game>.AddListener(AppEvent.GameNextRemoved, OnGameRemoved);
+            Messenger<Match>.AddListener(AppEvent.MatchNextAdded, OnMatchAdded);
+            Messenger<Match>.AddListener(AppEvent.MatchNextRemoved, OnMatchRemoved);
         }
 
         private void OnDestroy()
         {
-            Messenger<Game>.RemoveListener(AppEvent.GameNextAdded, OnGameAdded);
-            Messenger<Game>.RemoveListener(AppEvent.GameNextRemoved, OnGameRemoved);
+            Messenger<Match>.RemoveListener(AppEvent.MatchNextAdded, OnMatchAdded);
+            Messenger<Match>.RemoveListener(AppEvent.MatchNextRemoved, OnMatchRemoved);
         }
 
-        private void OnGameAdded(Game game)
+        private void OnMatchAdded(Match game)
         {
-            GameView view = Instantiate(gameViewPrefab, viewsHolder);
+            MatchView view = Instantiate(matchViewPrefab, viewsHolder);
             view.Init(game);
-            gameViews.Add(view);
+            matchViews.Add(view);
             view.SetIsStarted(false);
         }
 
-        private void OnGameRemoved(Game game) 
+        private void OnMatchRemoved(Match match) 
         {
-            var view = gameViews.FirstOrDefault(view => view.Game == game);
+            var view = matchViews.FirstOrDefault(view => view.Match == match);
 
             if (!view)
                 return;
 
             Destroy(view.gameObject);
-            gameViews.Remove(view);
+            matchViews.Remove(view);
         }
     }
 }

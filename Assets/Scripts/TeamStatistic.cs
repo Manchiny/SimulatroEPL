@@ -49,11 +49,11 @@ namespace SimulatorEPL
             GamesChanged?.Invoke();
         }
 
-        public void OnGameFinished(GameResult result)
+        public void OnGameFinished(MatchResult result)
         {
-            if (result == GameResult.Win)
+            if (result == MatchResult.Win)
                 WinsCount++;
-            else if (result == GameResult.Loose)
+            else if (result == MatchResult.Loose)
                 LooseCount++;
             else
                 DrawsCount++;

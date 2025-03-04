@@ -18,18 +18,18 @@ namespace SimulatorEPL.UI
 
         private void Awake()
         {
-            Messenger<Game, Team>.AddListener(AppEvent.TeamGoaled, OnTeamGoaled);
-            Messenger<Game>.AddListener(AppEvent.GameStarted, OnGameStarted);
-            Messenger<Game>.AddListener(AppEvent.GameFinished, OnGameFinished);
+            Messenger<Match, Team>.AddListener(AppEvent.TeamGoaled, OnTeamGoaled);
+            Messenger<Match>.AddListener(AppEvent.MatchStarted, OnGameStarted);
+            Messenger<Match>.AddListener(AppEvent.MatchFinished, OnGameFinished);
 
             Init();
         }
 
         private void OnDestroy()
         {
-            Messenger<Game, Team>.RemoveListener(AppEvent.TeamGoaled, OnTeamGoaled);
-            Messenger<Game>.RemoveListener(AppEvent.GameStarted, OnGameStarted);
-            Messenger<Game>.RemoveListener(AppEvent.GameFinished, OnGameFinished);
+            Messenger<Match, Team>.RemoveListener(AppEvent.TeamGoaled, OnTeamGoaled);
+            Messenger<Match>.RemoveListener(AppEvent.MatchStarted, OnGameStarted);
+            Messenger<Match>.RemoveListener(AppEvent.MatchFinished, OnGameFinished);
         }
 
         private void Init()
@@ -44,7 +44,7 @@ namespace SimulatorEPL.UI
             }
         }
 
-        private void OnTeamGoaled(Game game,Team teamGoaled)
+        private void OnTeamGoaled(Match game,Team teamGoaled)
         {
             TeamStatistic statsGoaledTeam = statistics[teamGoaled];
             TeamStatistic statsMissedGoalTeam = statistics[game.teamHome == teamGoaled ? game.teamAway : game.teamHome];
@@ -56,7 +56,7 @@ namespace SimulatorEPL.UI
             UpdateView(statsMissedGoalTeam);
         }
 
-        private void OnGameStarted(Game game)
+        private void OnGameStarted(Match game)
         {
             statistics[game.teamHome].OnGameStarted();
             statistics[game.teamAway].OnGameStarted();
@@ -65,7 +65,7 @@ namespace SimulatorEPL.UI
             UpdateView(statistics[game.teamAway]);
         }
 
-        private void OnGameFinished(Game game)
+        private void OnGameFinished(Match game)
         {
             statistics[game.teamHome].OnGameFinished(game.GetGameResultForSide(GameSide.Home));
             statistics[game.teamAway].OnGameFinished(game.GetGameResultForSide(GameSide.Away));

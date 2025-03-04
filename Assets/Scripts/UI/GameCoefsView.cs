@@ -18,21 +18,49 @@ namespace SimulatorEPL.UI
         private TextMeshProUGUI handicapAway;
         [Space]
         [SerializeField]
-        private TextMeshProUGUI totalMore;
+        private TextMeshProUGUI nextScoreHome;
         [SerializeField]
-        private TextMeshProUGUI totalLess;
+        private TextMeshProUGUI nextScoreAway;
+        [Space]
+        [SerializeField]
+        private TextMeshProUGUI totalSmallAdv;
+        [SerializeField]
+        private TextMeshProUGUI totalSmallOver;
+        [SerializeField]
+        private TextMeshProUGUI totalSmallUnder;
+        [Space]
+        [SerializeField]
+        private TextMeshProUGUI totalBigAdv;
+        [SerializeField]
+        private TextMeshProUGUI totalBigOver;
+        [SerializeField]
+        private TextMeshProUGUI totalBigUnder;
 
-        public void SetGameCoef(GameCoefs coefs)
+        public void SetGameCoef(MatchCoefs coefs)
         {
-            winHome.text = $"{coefs.winHome:N2}";
-            winAway.text = $"{coefs.winAway:N2}";
-            draw.text = $"{coefs.draw:N2}";
+            winHome.text = GetCoefString(coefs.winHome);
+            winAway.text = GetCoefString(coefs.winAway);
+            draw.text = GetCoefString(coefs.draw);
 
-            handicapHome.text = $"{coefs.handicapHome:N2}";
-            handicapAway.text = $"{coefs.handicapAway:N2}";
+            handicapHome.text = GetCoefString(coefs.handyHome);
+            handicapAway.text = GetCoefString(coefs.handyAway);
 
-            totalMore.text = $"{coefs.totalMore:N2}";
-            totalLess.text = $"{coefs.totalLess:N2}";
+            nextScoreHome.text = GetCoefString(coefs.nextScoreHome);
+            nextScoreAway.text = GetCoefString(coefs.nextScoreAway);
+
+            totalSmallAdv.text = GetCoefString(coefs.TotalSmallAdv);
+            totalSmallUnder.text = GetCoefString(coefs.totalSmallUnder);
+            totalSmallOver.text = GetCoefString(coefs.totalSmallOver);
+
+            totalBigAdv.text = GetCoefString(coefs.TotalBigAdv);
+            totalBigOver.text = GetCoefString(coefs.totalBigOver);
+            totalBigUnder.text = GetCoefString(coefs.totalBigUnder);
+        }
+
+        private string GetCoefString(double coef)
+        {
+            return coef.ToString("N2");
+            return (coef <= 1 || coef > 20) ? "-" : coef.ToString("N2");
         }
     }
 }

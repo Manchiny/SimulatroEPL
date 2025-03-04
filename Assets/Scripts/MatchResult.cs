@@ -1,6 +1,6 @@
 namespace SimulatorEPL
 {
-    public enum GameResult
+    public enum MatchResult
     {
         Win,
         Loose,

@@ -10,33 +10,33 @@ namespace SimulatorEPL.UI
         [SerializeField]
         private RectTransform viewsHolder;
         [SerializeField]
-        private GameView gameViewPrefab;
+        private MatchView gameViewPrefab;
 
-        private readonly List<GameView> gameViews = new List<GameView>();
+        private readonly List<MatchView> gameViews = new List<MatchView>();
 
         private void Awake()
         {
-            Messenger<Game>.AddListener(AppEvent.GameStarted, OnGameStarted);
-            Messenger<Game>.AddListener(AppEvent.GameFinished, OnGameFinished);
+            Messenger<Match>.AddListener(AppEvent.MatchStarted, OnGameStarted);
+            Messenger<Match>.AddListener(AppEvent.MatchFinished, OnGameFinished);
         }
 
         private void OnDestroy()
         {
-            Messenger<Game>.RemoveListener(AppEvent.GameStarted, OnGameStarted);
-            Messenger<Game>.RemoveListener(AppEvent.GameFinished, OnGameFinished);
+            Messenger<Match>.RemoveListener(AppEvent.MatchStarted, OnGameStarted);
+            Messenger<Match>.RemoveListener(AppEvent.MatchFinished, OnGameFinished);
         }
 
-        private void OnGameStarted(Game game)
+        private void OnGameStarted(Match game)
         {
-            GameView view = Instantiate(gameViewPrefab, viewsHolder);
+            MatchView view = Instantiate(gameViewPrefab, viewsHolder);
             view.Init(game);
             gameViews.Add(view);
             view.SetIsStarted(true);
         }
 
-        private void OnGameFinished(Game game)
+        private void OnGameFinished(Match game)
         {
-            var view = gameViews.FirstOrDefault(view => view.Game == game);
+            var view = gameViews.FirstOrDefault(view => view.Match == game);
 
             if (!view)
                 return;
