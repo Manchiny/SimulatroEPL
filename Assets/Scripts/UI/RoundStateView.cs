@@ -29,19 +29,19 @@ namespace SimulatorEPL.UI
             if (state == RoundState.FirstTime)
             {
                 roundCounter++;
-                text = $"Round: {roundCounter} Time: 1";
+                text = $"Round: {roundCounter}     Time: 1";
             }
             else if (state == RoundState.HalfTime)
             {
-                text = $"Round: {roundCounter} Half-time";
+                text = $"Round: {roundCounter}     Half-time";
             }
             else if (state == RoundState.SecondTime)
             {
-                text = $"Round: {roundCounter} Time: 2";
+                text = $"Round: {roundCounter}     Time: 2";
             }
             else if (state == RoundState.FullTime)
             {
-                text = $"Round: {roundCounter} Full time";
+                text = $"Round: {roundCounter}     Full time";
             }
 
             stateText.text = text;

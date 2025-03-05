@@ -13,7 +13,11 @@ namespace SimulatorEPL.UI
         private TextMeshProUGUI draw;
         [Space]
         [SerializeField]
+        private TextMeshProUGUI handicapHomeAvg;
+        [SerializeField]
         private TextMeshProUGUI handicapHome;
+        [SerializeField]
+        private TextMeshProUGUI handicapAwayAvg;
         [SerializeField]
         private TextMeshProUGUI handicapAway;
         [Space]
@@ -42,7 +46,9 @@ namespace SimulatorEPL.UI
             winAway.text = GetCoefString(coefs.winAway);
             draw.text = GetCoefString(coefs.draw);
 
+            handicapHomeAvg.text = coefs.HandyHomeAvg > 0 ? $"+{coefs.HandyHomeAvg}" : coefs.HandyHomeAvg.ToString("N1");
             handicapHome.text = GetCoefString(coefs.handyHome);
+            handicapAwayAvg.text = coefs.HandyAwayAvg > 0 ? $"+{coefs.HandyAwayAvg}" : coefs.HandyAwayAvg.ToString("N1");
             handicapAway.text = GetCoefString(coefs.handyAway);
 
             nextScoreHome.text = GetCoefString(coefs.nextScoreHome);

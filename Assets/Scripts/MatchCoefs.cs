@@ -6,6 +6,7 @@ namespace SimulatorEPL
         public readonly double winAway;
         public readonly double draw;
 
+        public readonly double handyHomeAvg;
         public readonly double handyHome;
         public readonly double handyAway;
 
@@ -22,7 +23,7 @@ namespace SimulatorEPL
 
 
         public MatchCoefs(double winHome, double winAway, double draw,
-            double handyHome, double handyAway,
+            double handyHome, double handyAway, double handyHomeAvg,
             double nextScoreHome, double nextScoreAway,
             double totalSmallUnder, double totalSmallOver,
             double totalBigUnder, double totalBigOver, double totalSmallAdv)
@@ -33,6 +34,7 @@ namespace SimulatorEPL
 
             this.handyHome = handyHome;
             this.handyAway = handyAway;
+            this.handyHomeAvg = handyHomeAvg;
 
             this.nextScoreHome = nextScoreHome;
             this.nextScoreAway = nextScoreAway;
@@ -48,5 +50,8 @@ namespace SimulatorEPL
 
         public double TotalSmallAdv => totalSmallAdv;
         public double TotalBigAdv => totalSmallAdv + 1;
+
+        public double HandyHomeAvg => handyHomeAvg;
+        public double HandyAwayAvg => -handyHomeAvg;
     }
 }

@@ -122,6 +122,7 @@ namespace SimulatorEPL
 
             double handyHome = 0;
             double handyAway = 0;
+            double handyHomeAvg = 0;
 
             double totalSmallAdv = (int)(avg1 + avg2) + 0.5;
 
@@ -159,6 +160,8 @@ namespace SimulatorEPL
                         handyHome += score.prob;
                     else
                         handyAway += score.prob;
+
+                    handyHomeAvg = -1.5f;
                 }
                 else
                 {
@@ -166,6 +169,8 @@ namespace SimulatorEPL
                         handyHome += 1f - score.prob;
                     else
                         handyAway += 1f - score.prob;
+
+                    handyHomeAvg = 1.5f;
                 }
             }
 
@@ -182,6 +187,7 @@ namespace SimulatorEPL
 
                 handyHome: 0.95f / handyHome, 
                 handyAway: 0.95f / handyAway,
+                handyHomeAvg: handyHomeAvg,
 
                 nextScoreHome: MinutesRemaining > 0 ? 0.95f / nextScoreHome : 0f,
                 nextScoreAway: MinutesRemaining > 0 ? 0.95f / nextScoreAway : 0f,
