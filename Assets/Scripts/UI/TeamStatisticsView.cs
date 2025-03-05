@@ -43,7 +43,7 @@ namespace SimulatorEPL.UI
         private RectTransform rectTransform;
         private Tween positionAnimation;
         private float height;
-        private float lastPlace;
+        private int lastPlace;
 
         public TeamStatistic Statistic { get; private set; }
 
@@ -91,10 +91,12 @@ namespace SimulatorEPL.UI
         private void OnPlaceChanged()
         {
             placeText.text = Statistic.Place.ToString();
-            SetPositionY(-(Statistic.Place - 1) * height);
+
+            float targetPosY = -(Statistic.Place - 1) * height;
+            SetPositionY(targetPosY);
 
             if (lastPlace != Statistic.Place)
-                placeSwitchPointer.ShowDirection(Statistic.Place < lastPlace);
+                placeSwitchPointer.ShowDirection(targetPosY > rectTransform.localPosition.y);
 
             lastPlace = Statistic.Place;
         }
@@ -118,7 +120,7 @@ namespace SimulatorEPL.UI
             winsText.text = Statistic.WinsCount.ToString();
             drawsText.text = Statistic.DrawsCount.ToString();
             loosesText.text = Statistic.LooseCount.ToString();
-            scoresText.text = Statistic.SeasonScore.ToString();
+            scoresText.text = Statistic.SeasonPoints.ToString();
         }
 
         private void OnGoalsChanged()
@@ -127,6 +129,15 @@ namespace SimulatorEPL.UI
             deltaGoalsText.text = Statistic.GoalsDelta.ToString();
         }
 
-        private string GetOutrightsString(double value) => value == 0 ? "-" : value.ToString("N2");
+        private string GetOutrightsString(double value)
+        {
+            if (value <= 1)
+                return "-";
+
+            if (value > 100)
+                return value.ToString("N0");
+
+            return value.ToString("N2");
+        }
     }
 }

@@ -16,9 +16,6 @@ namespace SimulatorEPL
         public string Id => title;
         public string Title => title;
         public Sprite Icon => icon;
-        public float Power => power;
-
-        public int Points { get; set; }
-        public int TempPoints { get; set; }
+        public float Power => power * 4.5f;
     }
 }

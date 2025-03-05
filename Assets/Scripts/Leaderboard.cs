@@ -50,7 +50,7 @@ namespace SimulatorEPL.UI
                 contentSizeFitter.verticalFit = FitMode.Unconstrained;
                 contentSizeFitter.enabled = false;
             }
-                
+
         }
 
         private void OnDestroy()
@@ -91,7 +91,7 @@ namespace SimulatorEPL.UI
         private void UpdatePlaces()
         {
             List<TeamStatistic> sortedStatistics = statistics.Values
-                .OrderByDescending(stats => stats.SeasonScore)
+                .OrderByDescending(stats => stats.SeasonPoints)
                 .ThenByDescending(stats => stats.Goals)
                 .ToList();
 
@@ -136,21 +136,14 @@ namespace SimulatorEPL.UI
         private void OnGameStateChanged(RoundState state)
         {
             if (state == RoundState.FullTime)
-            {
-                foreach (var team in teamsDb.Teams)
-                {
-                    var stats = statistics[team];
-                    team.Points = stats.SeasonScore;
-                }
-
                 GetOutright(teamsDb.Teams, matchMaker.NextMatches);
-            }
         }
-
-        // После окончания тура
 
         private void GetOutright(IReadOnlyList<Team> teams, IReadOnlyList<Match> seasonMatches)
         {
+            var teamsTempPoints = new Dictionary<Team, int>();
+            List<Team> sortedTeams = new List<Team>();
+
             var firstPlaceCount = new Dictionary<Team, int>();
             var topFourPlaces = new Dictionary<Team, int>();
             var lastThreePlaces = new Dictionary<Team, int>();
@@ -159,6 +152,7 @@ namespace SimulatorEPL.UI
 
             foreach (var team in teams)
             {
+                teamsTempPoints[team] = 0;
                 firstPlaceCount[team] = 0;
                 topFourPlaces[team] = 0;
                 lastThreePlaces[team] = 0;
@@ -169,45 +163,38 @@ namespace SimulatorEPL.UI
             for (int i = 0; i < trials; i++)
             {
                 foreach (var team in teams)
-                    team.TempPoints = team.Points;
+                    teamsTempPoints[team] = statistics[team].SeasonPoints;
 
-                int totalCounter = 0;
+                var randomNumbers = Enumerable.Range(0, seasonMatches.Count).Select(x => rnd.NextDouble()).ToArray();
 
-                for (int roundCounter = 0; roundCounter < 35; roundCounter++) // должно быть 38
+                for (int matchId = 0; matchId < seasonMatches.Count; matchId++)
                 {
-                    var randomNumbers = Enumerable.Range(0, 10).Select(x => rnd.NextDouble()).ToArray();
+                    Match currentMatch = seasonMatches[matchId];
 
-                    for (int matchIndex = 0; matchIndex < 10; matchIndex++)
+                    if (1f / currentMatch.Coefs.winHome <= randomNumbers[matchId])
                     {
-                        Match currentMatch = seasonMatches[totalCounter];
-
-                        if (1f / currentMatch.Coefs.winHome <= randomNumbers[matchIndex])
-                        {
-                            currentMatch.teamHome.TempPoints += 3;
-                        }
-                        else if (1f - (1f / currentMatch.Coefs.winAway) <= randomNumbers[matchIndex])
-                        {
-                            currentMatch.teamAway.TempPoints += 3;
-                        }
-                        else
-                        {
-                            currentMatch.teamHome.TempPoints += 1;
-                            currentMatch.teamAway.TempPoints += 1;
-                        }
-
-                        totalCounter++;
+                        teamsTempPoints[currentMatch.teamHome] += 3;
+                    }
+                    else if (1f - (1f / currentMatch.Coefs.winAway) <= randomNumbers[matchId])
+                    {
+                        teamsTempPoints[currentMatch.teamAway] += 3;
+                    }
+                    else
+                    {
+                        teamsTempPoints[currentMatch.teamHome] += 1;
+                        teamsTempPoints[currentMatch.teamAway] += 1;
                     }
                 }
 
-                teams = teams.OrderByDescending(t => t.TempPoints + t.Points).ToList(); //ThenBy pointsDelta
+                sortedTeams = teamsTempPoints.OrderByDescending(x => x.Value).Select(p => p.Key).ToList();
 
-                firstPlaceCount[teams[0]] += 1;
+                firstPlaceCount[sortedTeams[0]] += 1;
 
-                for (int i1 = 0; i1 < 4; i1++)
-                    topFourPlaces[teams[i1]] += 1;
+                for (int c = 0; c < 4; c++)
+                    topFourPlaces[sortedTeams[c]] += 1;
 
-                for (int i2 = 19; i2 > 16; i2--)
-                    lastThreePlaces[teams[i2]] += 1;
+                for (int c = 19; c > 16; c--)
+                    lastThreePlaces[sortedTeams[c]] += 1;
             }
 
             foreach (var team in teams)
@@ -219,10 +206,12 @@ namespace SimulatorEPL.UI
                 double pairlastThreePlaces = lastThreePlaces[team];
 
                 view.SetOutrights(
-                    pairFirstPlace == 0 ? 0 : 0.95f / (pairFirstPlace / (double)trials),
-                    pairtopFourPlaces == 0 ? 0 : 0.95f / (pairtopFourPlaces / trials), 
-                    pairlastThreePlaces == 0 ? 0 : 0.95f / (pairlastThreePlaces / trials));
+                    pairFirstPlace == 0 ? 0 : Clamp(0.95f / (pairFirstPlace / (double)trials)),
+                    pairtopFourPlaces == 0 ? 0 : Clamp(0.95f / (pairtopFourPlaces / trials)),
+                    pairlastThreePlaces == 0 ? 0 : Clamp(0.95f / (pairlastThreePlaces / trials)));
             }
+
+            double Clamp(double value) => value > 1000 ? 1000 : value;
         }
     }
 }

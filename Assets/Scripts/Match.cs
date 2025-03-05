@@ -44,7 +44,7 @@ namespace SimulatorEPL
             }
         }
 
-        public int MinutesRemaining => AppConstants.GameDurationSeconds - CurrentTime;
+        public int MinutesRemaining => AppConstants.RoundDurationSeconds - CurrentTime;
 
         public Score Score { get; private set; }
 
@@ -67,7 +67,7 @@ namespace SimulatorEPL
 
         public void Finish()
         {
-            CurrentTime = AppConstants.GameDurationSeconds;
+            CurrentTime = AppConstants.RoundDurationSeconds;
             RecalculateCoefs();
         }
 

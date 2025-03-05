@@ -11,8 +11,6 @@ namespace SimulatorEPL
         [SerializeField]
         private TeamsDb teamsDb;
 
-        private const int matchesInRoundCount = 10;
-
         private readonly WaitForSeconds waitSecond = new WaitForSeconds(1f);
 
         private readonly Queue<Match> currentMatches = new Queue<Match>();
@@ -73,7 +71,7 @@ namespace SimulatorEPL
 
         private void AddNewRoundGames()
         {
-            for (int i = 0; i < matchesInRoundCount; i++)
+            for (int i = 0; i < AppConstants.RoundMatchesCount; i++)
                 TryAddCurrentMatch();
         }
 
@@ -82,7 +80,7 @@ namespace SimulatorEPL
             Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.FirstTime);
 
             AddNewRoundGames();
-            int counter = AppConstants.GameDurationSeconds;
+            int counter = AppConstants.RoundDurationSeconds;
 
             while (counter > 0)
             {
@@ -91,11 +89,11 @@ namespace SimulatorEPL
                 foreach (var game in currentMatches)
                     game.SimulateMinute();
 
-                if (counter == AppConstants.GameDurationSeconds / 2)
+                if (counter == AppConstants.RoundDurationSeconds / 2)
                 {
                     Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.HalfTime);
 
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < AppConstants.RoundStateChangePauseSeconds; i++)
                         yield return waitSecond;
 
                     Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.SecondTime);
@@ -114,19 +112,23 @@ namespace SimulatorEPL
             }
 
             yield return null;
+            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.FullTime);
             Debug.Log("Games finished");
 
             if (nextMatches.Count > 0)
+            {
                 StartCoroutine(ShowTimeOut());
+            }
             else
+            {
                 Debug.Log("All games finished");
+                Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.None);
+            }
         }
 
         private IEnumerator ShowTimeOut()
         {
-            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.FullTime);
-
-            int timer = 5;
+            int timer = AppConstants.RoundStateChangePauseSeconds;
 
             while (timer > 0)
             {

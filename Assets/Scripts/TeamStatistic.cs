@@ -41,7 +41,7 @@ namespace SimulatorEPL
         public int MissedGoals { get; private set; }
 
         public int GoalsDelta => Goals - MissedGoals;
-        public int SeasonScore => WinsCount * 3 + DrawsCount * 1;
+        public int SeasonPoints => WinsCount * 3 + DrawsCount * 1;
 
         public void OnGameStarted()
         {
