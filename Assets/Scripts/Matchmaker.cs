@@ -18,6 +18,8 @@ namespace SimulatorEPL
         private readonly Queue<Match> currentMatches = new Queue<Match>();
         private readonly Queue<Match> nextMatches = new Queue<Match>();
 
+        public IReadOnlyList<Match> NextMatches => nextMatches.ToList();
+
         private void Start()
         {
             Init();

@@ -130,7 +130,10 @@ namespace SimulatorEPL
 
             var scores = new List<Score>();
 
-            for (int i = Score.home; i < Score.home + 5; i++)
+            // Для правой таблицы - RemainingMinuts = Max всегда, для матчей, которые не сыграны
+            // Score = 0:0
+
+            for (int i = Score.home; i < Score.home + 5; i++) 
             {
                 for (int j = Score.away; j < Score.away + 5; j++)
                     scores.Add(new Score(i, j, GetScoreProb(i, j)));

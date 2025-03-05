@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,17 +31,24 @@ namespace SimulatorEPL.UI
         private TextMeshProUGUI scoresText;
         [Space]
         [SerializeField]
-        private TextMeshProUGUI coefPlace1Text;
+        private TextMeshProUGUI firstPlace;
         [SerializeField]
-        private TextMeshProUGUI coefPlace2Text;
+        private TextMeshProUGUI topFourPlace;
         [SerializeField]
-        private TextMeshProUGUI coefPlace3Text;
+        private TextMeshProUGUI lastThreePlace;
 
-        private TeamStatistic statistic;
+        private RectTransform rectTransform;
+        private Tween positionAnimation;
+        private float height;
+
+        public TeamStatistic Statistic { get; private set; }
 
         public void Init(TeamStatistic statistic)
         {
-            this.statistic = statistic;
+            rectTransform = GetComponent<RectTransform>();
+            height = rectTransform.sizeDelta.y;
+
+            this.Statistic = statistic;
 
             teamLable.sprite = statistic.team.Icon;
             teamName.text = statistic.team.Title;
@@ -52,14 +60,26 @@ namespace SimulatorEPL.UI
             statistic.GamesChanged += OnGamesChanged;
         }
 
+        public void SetOutrights(double firstPlace, double topFourPlace, double lastThreePlace)
+        {
+            this.firstPlace.text = GetOutrightsString(firstPlace);
+            this.topFourPlace.text = GetOutrightsString(topFourPlace);
+            this.lastThreePlace.text = GetOutrightsString(lastThreePlace);
+        }
+
+        private string GetOutrightsString(double value) 
+        {
+            return value == 0 ? "-" : value.ToString("N2");
+        }
+
         private void OnDestroy()
         {
-            if (statistic == null)
+            if (Statistic == null)
                 return;
 
-            statistic.PlaceChanged -= OnPlaceChanged;
-            statistic.GoalsChanged -= OnGoalsChanged;
-            statistic.GamesChanged -= OnGamesChanged;
+            Statistic.PlaceChanged -= OnPlaceChanged;
+            Statistic.GoalsChanged -= OnGoalsChanged;
+            Statistic.GamesChanged -= OnGamesChanged;
         }
 
         private void UpdateValues()
@@ -67,30 +87,40 @@ namespace SimulatorEPL.UI
             OnPlaceChanged();
             OnGamesChanged();
             OnGoalsChanged();
-
-            //coefPlace1Text.text = statistic.
-            //coefPlace2Text.text = statistic.
-            //coefPlace3Text.text = statistic.
         }
 
         private void OnPlaceChanged()
         {
-            placeText.text = statistic.Place.ToString();
+            placeText.text = Statistic.Place.ToString();
+            SetPositionY(-(Statistic.Place - 1) * height);
+        }
+
+        private void SetPositionY(float positionY)
+        {
+            if (Statistic == null)
+                return;
+
+            positionAnimation?.Kill();
+
+            positionAnimation = rectTransform
+                .DOLocalMoveY(positionY, 0.8f)
+                .SetLink(gameObject)
+                .SetEase(Ease.Linear);
         }
 
         private void OnGamesChanged()
         {
-            gamesCountText.text = statistic.GamesCount.ToString();
-            winsText.text = statistic.WinsCount.ToString();
-            drawsText.text = statistic.DrawsCount.ToString();
-            loosesText.text = statistic.LooseCount.ToString();
+            gamesCountText.text = Statistic.GamesCount.ToString();
+            winsText.text = Statistic.WinsCount.ToString();
+            drawsText.text = Statistic.DrawsCount.ToString();
+            loosesText.text = Statistic.LooseCount.ToString();
+            scoresText.text = Statistic.SeasonScore.ToString();
         }
 
         private void OnGoalsChanged()
         {
-            goalsText.text = $"{statistic.Goals} - {statistic.MissedGoals}";
-            deltaGoalsText.text = statistic.GoalsDelta.ToString();
-            scoresText.text = statistic.SeasonScore.ToString();
+            goalsText.text = $"{Statistic.Goals} - {Statistic.MissedGoals}";
+            deltaGoalsText.text = Statistic.GoalsDelta.ToString();
         }
     }
 }
