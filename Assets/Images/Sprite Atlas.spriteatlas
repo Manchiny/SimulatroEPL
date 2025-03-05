@@ -43,7 +43,7 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 102900000, guid: 9c8668f0d893b5044b2047d08024f376, type: 3}
+    - {fileID: 102900000, guid: ab88ff1b1fd0a4f4089539a0cc3b03dc, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -53,6 +53,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c34ddcd0a7e50244f9fcca613f24f752, type: 3}
   - {fileID: 21300000, guid: dee9cb21bc20f0d4b90fab7d27956520, type: 3}
   - {fileID: 21300000, guid: 5a121051ca180e941bb075ca293e95ef, type: 3}
+  - {fileID: 21300000, guid: e50f99d1929ec9c49949f774a41fa0c2, type: 3}
   - {fileID: 21300000, guid: f48503039853bac4d90802e63efdc548, type: 3}
   - {fileID: 21300000, guid: 6fc846b336f2cd54890486f486536f6b, type: 3}
   - {fileID: 21300000, guid: 382bdf55bd58dad4c943e52b7ae61f01, type: 3}
@@ -60,10 +61,12 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8be525d644a450a429dd55cfafa76c26, type: 3}
   - {fileID: 21300000, guid: 8fc41f4895de0ca4c98aa55b19928d14, type: 3}
   - {fileID: 21300000, guid: 8b363f980dd212e42948d18ae0973218, type: 3}
+  - {fileID: 21300000, guid: 4cc52729567dcf04aa47a667a3c6ef6b, type: 3}
   - {fileID: 21300000, guid: a8c4f59a85641c6438af6803eaa5b2e1, type: 3}
   - {fileID: 21300000, guid: 07e2766cda1ef934fbc86cec0f87ac21, type: 3}
   - {fileID: 21300000, guid: 3af2977cdebc72e4fb40d1b2c86ac388, type: 3}
   - {fileID: 21300000, guid: fc25ff8c8287c364cbda41d32e30b2c4, type: 3}
+  - {fileID: 21300000, guid: 4ee0965df28c4334790cde48d0544d0f, type: 3}
   - {fileID: 21300000, guid: 6716faade6ede6c408ca3ee19de4b750, type: 3}
   - {fileID: 21300000, guid: cd3a2b8e68684bb4aa213813843c61b5, type: 3}
   - {fileID: 21300000, guid: 8ba0f6ee13d867c4086c31dbb539f403, type: 3}
@@ -74,6 +77,7 @@ SpriteAtlas:
   - 3 Nottingham Forest
   - 9 Fulham
   - 5 Newcastle
+  - circle
   - 11 Brentford
   - 6 bournemouth
   - 1 Liverpool
@@ -81,10 +85,12 @@ SpriteAtlas:
   - 10 Aston Villa
   - 2 Arsenal
   - 15 West Ham
+  - arrow_down
   - 16 Everton
   - 18 Ipswich Town
   - 13 Tottenham
   - 19 Leicester City
+  - circle sliced
   - 14 Manchester
   - 17 Wolverhampton
   - 3 Manchester City

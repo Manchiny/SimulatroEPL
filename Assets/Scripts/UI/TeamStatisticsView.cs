@@ -36,10 +36,14 @@ namespace SimulatorEPL.UI
         private TextMeshProUGUI topFourPlace;
         [SerializeField]
         private TextMeshProUGUI lastThreePlace;
+        [Space]
+        [SerializeField]
+        private PlaceSwithPointer placeSwitchPointer;
 
         private RectTransform rectTransform;
         private Tween positionAnimation;
         private float height;
+        private float lastPlace;
 
         public TeamStatistic Statistic { get; private set; }
 
@@ -67,11 +71,6 @@ namespace SimulatorEPL.UI
             this.lastThreePlace.text = GetOutrightsString(lastThreePlace);
         }
 
-        private string GetOutrightsString(double value) 
-        {
-            return value == 0 ? "-" : value.ToString("N2");
-        }
-
         private void OnDestroy()
         {
             if (Statistic == null)
@@ -93,6 +92,11 @@ namespace SimulatorEPL.UI
         {
             placeText.text = Statistic.Place.ToString();
             SetPositionY(-(Statistic.Place - 1) * height);
+
+            if (lastPlace != Statistic.Place)
+                placeSwitchPointer.ShowDirection(Statistic.Place < lastPlace);
+
+            lastPlace = Statistic.Place;
         }
 
         private void SetPositionY(float positionY)
@@ -122,5 +126,7 @@ namespace SimulatorEPL.UI
             goalsText.text = $"{Statistic.Goals} - {Statistic.MissedGoals}";
             deltaGoalsText.text = Statistic.GoalsDelta.ToString();
         }
+
+        private string GetOutrightsString(double value) => value == 0 ? "-" : value.ToString("N2");
     }
 }

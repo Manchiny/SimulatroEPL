@@ -173,7 +173,7 @@ namespace SimulatorEPL.UI
 
                 int totalCounter = 0;
 
-                for (int roundCounter = 0; roundCounter < 5; roundCounter++)
+                for (int roundCounter = 0; roundCounter < 35; roundCounter++) // должно быть 38
                 {
                     var randomNumbers = Enumerable.Range(0, 10).Select(x => rnd.NextDouble()).ToArray();
 
@@ -181,11 +181,11 @@ namespace SimulatorEPL.UI
                     {
                         Match currentMatch = seasonMatches[totalCounter];
 
-                        if (0.95f / currentMatch.Coefs.winHome <= randomNumbers[matchIndex])
+                        if (1f / currentMatch.Coefs.winHome <= randomNumbers[matchIndex])
                         {
                             currentMatch.teamHome.TempPoints += 3;
                         }
-                        else if (0.95f / currentMatch.Coefs.winAway >= 1 - randomNumbers[matchIndex])
+                        else if (1f - (1f / currentMatch.Coefs.winAway) <= randomNumbers[matchIndex])
                         {
                             currentMatch.teamAway.TempPoints += 3;
                         }
@@ -206,7 +206,7 @@ namespace SimulatorEPL.UI
                 for (int i1 = 0; i1 < 4; i1++)
                     topFourPlaces[teams[i1]] += 1;
 
-                for (int i2 = 9; i2 > 6; i2--)
+                for (int i2 = 19; i2 > 16; i2--)
                     lastThreePlaces[teams[i2]] += 1;
             }
 

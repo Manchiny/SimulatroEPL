@@ -59,7 +59,7 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: a8c4f59a85641c6438af6803eaa5b2e1, type: 3}
     power: 0.01448
   - title: West Ham United
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 8b363f980dd212e42948d18ae0973218, type: 3}
     power: 0.01412
   - title: Wolverhampton Wanderers
     icon: {fileID: 21300000, guid: cd3a2b8e68684bb4aa213813843c61b5, type: 3}
