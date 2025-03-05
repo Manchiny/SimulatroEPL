@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Sprite Atlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 2
+      m_CompressionQuality: 100
+      m_CrunchedCompression: 1
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 8
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 9c8668f0d893b5044b2047d08024f376, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 877fb5503a9aa184590417fcd74d311a, type: 3}
+  - {fileID: 21300000, guid: c34ddcd0a7e50244f9fcca613f24f752, type: 3}
+  - {fileID: 21300000, guid: dee9cb21bc20f0d4b90fab7d27956520, type: 3}
+  - {fileID: 21300000, guid: 5a121051ca180e941bb075ca293e95ef, type: 3}
+  - {fileID: 21300000, guid: f48503039853bac4d90802e63efdc548, type: 3}
+  - {fileID: 21300000, guid: 6fc846b336f2cd54890486f486536f6b, type: 3}
+  - {fileID: 21300000, guid: 382bdf55bd58dad4c943e52b7ae61f01, type: 3}
+  - {fileID: 21300000, guid: 130bcda634a99744abc4236cfc442b7e, type: 3}
+  - {fileID: 21300000, guid: 8be525d644a450a429dd55cfafa76c26, type: 3}
+  - {fileID: 21300000, guid: 8fc41f4895de0ca4c98aa55b19928d14, type: 3}
+  - {fileID: 21300000, guid: 8b363f980dd212e42948d18ae0973218, type: 3}
+  - {fileID: 21300000, guid: a8c4f59a85641c6438af6803eaa5b2e1, type: 3}
+  - {fileID: 21300000, guid: 07e2766cda1ef934fbc86cec0f87ac21, type: 3}
+  - {fileID: 21300000, guid: 3af2977cdebc72e4fb40d1b2c86ac388, type: 3}
+  - {fileID: 21300000, guid: fc25ff8c8287c364cbda41d32e30b2c4, type: 3}
+  - {fileID: 21300000, guid: 6716faade6ede6c408ca3ee19de4b750, type: 3}
+  - {fileID: 21300000, guid: cd3a2b8e68684bb4aa213813843c61b5, type: 3}
+  - {fileID: 21300000, guid: 8ba0f6ee13d867c4086c31dbb539f403, type: 3}
+  - {fileID: 21300000, guid: e9a9d79fc09ba884699524d4eab42f03, type: 3}
+  - {fileID: 21300000, guid: 24a13aef2ea34e944b2c199dce97d49e, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - 7 Crystal Palace
+  - 3 Nottingham Forest
+  - 9 Fulham
+  - 5 Newcastle
+  - 11 Brentford
+  - 6 bournemouth
+  - 1 Liverpool
+  - 20 Southampton
+  - 10 Aston Villa
+  - 2 Arsenal
+  - 15 West Ham
+  - 16 Everton
+  - 18 Ipswich Town
+  - 13 Tottenham
+  - 19 Leicester City
+  - 14 Manchester
+  - 17 Wolverhampton
+  - 3 Manchester City
+  - 8 Brighton
+  - 4 Chelsea
+  m_RenderDataMap: {}
+  m_Tag: Sprite Atlas
+  m_IsVariant: 0
