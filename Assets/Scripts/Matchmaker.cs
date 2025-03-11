@@ -17,6 +17,7 @@ namespace SimulatorEPL
         private readonly Queue<Match> nextMatches = new Queue<Match>();
 
         public IReadOnlyList<Match> NextMatches => nextMatches.ToList();
+        public int CurrentRound { get; private set; }
 
         private void Start()
         {
@@ -71,10 +72,12 @@ namespace SimulatorEPL
 
         private IEnumerator SimulateNewRound()
         {
+            CurrentRound++;
+
             for (int i = 0; i < AppConstants.RoundMatchesCount; i++)
                 TryAddCurrentMatch();
 
-            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.Started);
+            Messenger<int, RoundState>.Broadcast(AppEvent.RoundStateChanged, CurrentRound, RoundState.Started);
 
             foreach (var match in currentMatches)
                 match.Start();
@@ -90,7 +93,7 @@ namespace SimulatorEPL
             currentMatches.Clear();
 
             yield return null;
-            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.Finished);
+            Messenger<int, RoundState>.Broadcast(AppEvent.RoundStateChanged, CurrentRound, RoundState.Finished);
 
             Debug.Log("Round finished");
 
@@ -101,7 +104,7 @@ namespace SimulatorEPL
             else
             {
                 Debug.Log("All games finished");
-                Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.None);
+                Messenger<int, RoundState>.Broadcast(AppEvent.RoundStateChanged, CurrentRound, RoundState.None);
             }
         }
 
@@ -116,7 +119,7 @@ namespace SimulatorEPL
             }
 
             yield return null;
-            Messenger<RoundState>.Broadcast(AppEvent.RoundStateChanged, RoundState.None);
+            Messenger<int, RoundState>.Broadcast(AppEvent.RoundStateChanged, CurrentRound, RoundState.None);
             yield return null;
 
             StartCoroutine(SimulateNewRound());

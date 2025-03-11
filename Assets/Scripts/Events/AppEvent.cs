@@ -13,5 +13,7 @@ namespace SimulatorEPL.Events
 
         public const string MatchStateChanged = nameof(MatchStateChanged);
         public const string RoundStateChanged = nameof(RoundStateChanged);
+
+        public const string ExpressEventSelectChanged = nameof(ExpressEventSelectChanged);
     }
 }

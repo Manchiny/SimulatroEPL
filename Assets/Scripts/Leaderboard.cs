@@ -18,15 +18,39 @@ namespace SimulatorEPL.UI
         private TeamStatisticsView statisticsViewPrefab;
         [SerializeField]
         private Matchmaker matchMaker;
+        [Space]
+        [SerializeField]
+        private LayoutElement layoutElement;
+        [SerializeField]
+        private CanvasGroup canvasGroup;
+        [SerializeField]
+        private RectTransform outrightsDescriptionHolderTop;
+        [SerializeField]
+        private RectTransform outrightsDescriptionHolderBottom;
 
         private readonly Dictionary<Team, TeamStatistic> statistics = new Dictionary<Team, TeamStatistic>();
         private readonly List<TeamStatisticsView> views = new List<TeamStatisticsView>();
+
+        public void SetVisible(bool visible)
+        {
+            layoutElement.ignoreLayout = !visible;
+            canvasGroup.alpha = visible ? 1f : 0f;
+        }
+
+        public void SetOutrigthsEnabled(bool enabled) 
+        {
+            outrightsDescriptionHolderTop.gameObject.SetActive(enabled);
+            outrightsDescriptionHolderBottom.gameObject.SetActive(enabled);
+
+            foreach (var view in views)
+                view.SetOutrigthEnabled(enabled);
+        }
 
         private void Awake()
         {
             Messenger<Match, Team>.AddListener(AppEvent.TeamGoaled, OnTeamGoaled);
             Messenger<Match>.AddListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
-            Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
+            Messenger<int, RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
 
             Init();
         }
@@ -53,7 +77,7 @@ namespace SimulatorEPL.UI
         {
             Messenger<Match, Team>.RemoveListener(AppEvent.TeamGoaled, OnTeamGoaled);
             Messenger<Match>.RemoveListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
-            Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
+            Messenger<int, RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
         }
 
         private void Init()
@@ -122,7 +146,7 @@ namespace SimulatorEPL.UI
             UpdatePlaces();
         }
 
-        private void OnRoundStateChanged(RoundState state)
+        private void OnRoundStateChanged(int round, RoundState state)
         {
             if (state == RoundState.Finished)
                 RecalculateOutrights(teamsDb.Teams, matchMaker.NextMatches);

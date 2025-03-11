@@ -9,40 +9,37 @@ namespace SimulatorEPL.UI
         [SerializeField]
         private TextMeshProUGUI stateText;
 
-        private int roundCounter;
-
         private void Awake()
         {
-            Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
-            OnRoundStateChanged(RoundState.None);
+            OnRoundStateChanged(0, RoundState.None);
+            Messenger<int, RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
         }
 
         private void OnDestroy()
         {
-            Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
+            Messenger<int, RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
         }
 
-        private void OnRoundStateChanged(RoundState state)
+        private void OnRoundStateChanged(int round, RoundState state)
         {
             string text = string.Empty;
 
             if (state == RoundState.Started)
             {
-                roundCounter++;
-              //  text = $"Round: {roundCounter}     Time: 1";
-                text = $"Round: {roundCounter}";
+                //  text = $"Round: {round}     Time: 1";
+                text = $"Round: {round}";
             }
             //else if (state == RoundState.HalfTime)
             //{
-            //    text = $"Round: {roundCounter}     Half-time";
+            //    text = $"Round: {round}     Half-time";
             //}
             //else if (state == RoundState.SecondTime)
             //{
-            //    text = $"Round: {roundCounter}     Time: 2";
+            //    text = $"Round: {round}     Time: 2";
             //}
             else if (state == RoundState.Finished)
             {
-                text = $"Round: {roundCounter}     Finished";
+                text = $"Round: {round}     Finished";
             }
 
             stateText.text = text;

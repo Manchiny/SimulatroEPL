@@ -31,6 +31,8 @@ namespace SimulatorEPL.UI
         private TextMeshProUGUI scoresText;
         [Space]
         [SerializeField]
+        private RectTransform outrightsHolder;
+        [SerializeField]
         private TextMeshProUGUI firstPlace;
         [SerializeField]
         private TextMeshProUGUI topFourPlace;
@@ -62,6 +64,11 @@ namespace SimulatorEPL.UI
             statistic.PlaceChanged += OnPlaceChanged;
             statistic.GoalsChanged += OnGoalsChanged;
             statistic.GamesChanged += OnGamesChanged;
+        }
+
+        public void SetOutrigthEnabled(bool enabled)
+        {
+            outrightsHolder.gameObject.SetActive(enabled);
         }
 
         public void SetOutrights(double firstPlace, double topFourPlace, double lastThreePlace)

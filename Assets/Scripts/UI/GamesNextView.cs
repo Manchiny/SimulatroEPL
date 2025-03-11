@@ -2,6 +2,7 @@ using SimulatorEPL.Events;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SimulatorEPL.UI
 {
@@ -11,8 +12,18 @@ namespace SimulatorEPL.UI
         private RectTransform viewsHolder;
         [SerializeField]
         private MatchView matchViewPrefab;
+        [SerializeField]
+        private LayoutElement layoutElement;
+        [SerializeField]
+        private CanvasGroup canvasGroup;
 
         private readonly List<MatchView> matchViews = new List<MatchView>();
+
+        public void SetVisible(bool visible)
+        {
+            layoutElement.ignoreLayout = !visible;
+            canvasGroup.alpha = visible ? 1f : 0f;
+        }
 
         private void Awake()
         {

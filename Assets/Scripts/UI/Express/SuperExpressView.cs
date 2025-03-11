@@ -1,22 +1,26 @@
 using SimulatorEPL.Events;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SimulatorEPL.UI
+namespace SimulatorEPL.UI.Express
 {
-    public class GamesCurrentView : MonoBehaviour
+    public class SuperExpressView : MonoBehaviour
     {
         [SerializeField]
         private RectTransform viewsHolder;
         [SerializeField]
-        private MatchView gameViewPrefab;
+        private MatchExpressView expressViewPrefab;
+        [SerializeField]
+        private Matchmaker matchmaker;
+        [Space]
         [SerializeField]
         private LayoutElement layoutElement;
         [SerializeField]
         private CanvasGroup canvasGroup;
 
-        private readonly List<MatchView> matchViews = new List<MatchView>();
+        private readonly List<MatchExpressView> views = new List<MatchExpressView>();
 
         public void SetVisible(bool visible)
         {
@@ -27,35 +31,28 @@ namespace SimulatorEPL.UI
         private void Awake()
         {
             Messenger<int, RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
-            Messenger<Match>.AddListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
+
+            for (int i = 0; i < AppConstants.RoundMatchesCount; i++)
+            {
+                var view = Instantiate(expressViewPrefab, viewsHolder);
+                views.Add(view);
+            }
         }
 
         private void OnDestroy()
         {
             Messenger<int, RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
-            Messenger<Match>.RemoveListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
-        }
-
-        private void OnMatchStateChanged(Match match)
-        {
-            if (match.State != MatchState.FirstTime)
-                return;
-
-            MatchView view = Instantiate(gameViewPrefab, viewsHolder);
-            view.Init(match);
-            matchViews.Add(view);
-            view.SetIsStarted(true);
         }
 
         private void OnRoundStateChanged(int round, RoundState state)
         {
-            if (state != RoundState.None)
+            if (state != RoundState.Started)
                 return;
 
-            foreach (var view in matchViews)
-                Destroy(view.gameObject);
+            List<Match> matches = matchmaker.NextMatches.Take(AppConstants.RoundMatchesCount).ToList();
 
-            matchViews.Clear();
+            for (int i = 0; i < views.Count; i++)
+                views[i].Init(matches[i]);
         }
     }
 }
