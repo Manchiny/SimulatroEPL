@@ -63,9 +63,15 @@ namespace SimulatorEPL.UI
             totalBigUnder.text = GetCoefString(coefs.totalBigUnder);
         }
 
-        private string GetCoefString(double coef)
+        public void ClearCoefs()
         {
-            return (coef <= 1 || coef > 20) ? "-" : coef.ToString("N2");
+            winHome.text = winAway.text = draw.text =
+            handicapHome.text = handicapAway.text =
+            nextScoreHome.text = nextScoreAway.text =
+            totalSmallUnder.text = totalSmallOver.text =
+            totalBigOver.text = totalBigUnder.text = GetCoefString(0);
         }
+
+        private string GetCoefString(double coef) => (coef <= 1 || coef > 20) ? "-" : coef.ToString("N2");
     }
 }
