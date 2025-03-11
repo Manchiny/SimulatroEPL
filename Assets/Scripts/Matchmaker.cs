@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SimulatorEPL
 {
@@ -10,6 +11,8 @@ namespace SimulatorEPL
     {
         [SerializeField]
         private TeamsDb teamsDb;
+        [SerializeField]
+        private Button nextRoundButton; 
 
         private readonly WaitForSeconds waitSecond = new WaitForSeconds(1f);
 
@@ -19,15 +22,25 @@ namespace SimulatorEPL
         public IReadOnlyList<Match> NextMatches => nextMatches.ToList();
         public int CurrentRound { get; private set; }
 
+        private void Awake()
+        {
+            nextRoundButton.onClick.AddListener(OnButtonNextRoundClicked);
+        }
+
         private void Start()
         {
             Init();
-            StartCoroutine(SimulateNewRound());
         }
 
         private void Init()
         {
             GenerateSeasonMatches(teamsDb.Teams);
+            SetButtonNextRoundEnabled(true);
+        }
+
+        private void OnButtonNextRoundClicked()
+        {
+            StartCoroutine(SimulateNewRound());
         }
 
         private void GenerateSeasonMatches(IReadOnlyList<Team> teams)
@@ -72,6 +85,7 @@ namespace SimulatorEPL
 
         private IEnumerator SimulateNewRound()
         {
+            SetButtonNextRoundEnabled(false);
             CurrentRound++;
 
             for (int i = 0; i < AppConstants.RoundMatchesCount; i++)
@@ -99,30 +113,19 @@ namespace SimulatorEPL
 
             if (nextMatches.Count > 0)
             {
-                StartCoroutine(ShowTimeOut());
+                SetButtonNextRoundEnabled(true);
             }
             else
             {
                 Debug.Log("All games finished");
-                Messenger<int, RoundState>.Broadcast(AppEvent.RoundStateChanged, CurrentRound, RoundState.None);
             }
+
+                Messenger<int, RoundState>.Broadcast(AppEvent.RoundStateChanged, CurrentRound, RoundState.None);
         }
 
-        private IEnumerator ShowTimeOut()
+        private void SetButtonNextRoundEnabled(bool enabled)
         {
-            int timer = AppConstants.HalfTimeDurationSeconds;
-
-            while (timer > 0)
-            {
-                yield return waitSecond;
-                timer--;
-            }
-
-            yield return null;
-            Messenger<int, RoundState>.Broadcast(AppEvent.RoundStateChanged, CurrentRound, RoundState.None);
-            yield return null;
-
-            StartCoroutine(SimulateNewRound());
+            nextRoundButton.interactable = enabled;
         }
 
         private void TryAddCurrentMatch()

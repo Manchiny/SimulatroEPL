@@ -22,6 +22,7 @@ namespace SimulatorEPL.UI
         {
             layoutElement.ignoreLayout = !visible;
             canvasGroup.alpha = visible ? 1f : 0f;
+            canvasGroup.blocksRaycasts = visible;
         }
 
         private void Awake()
