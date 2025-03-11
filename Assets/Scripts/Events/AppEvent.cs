@@ -8,12 +8,10 @@ namespace SimulatorEPL.Events
         public const string MatchNextAdded = nameof(MatchNextAdded);
         public const string MatchNextRemoved = nameof(MatchNextRemoved);
 
-        public const string MatchStarted = nameof(MatchStarted);
-        public const string MatchFinished = nameof(MatchFinished);
-
         public const string GoalSoonCalculated = nameof(GoalSoonCalculated);
         public const string CoefsChanged = nameof(CoefsChanged);
 
+        public const string MatchStateChanged = nameof(MatchStateChanged);
         public const string RoundStateChanged = nameof(RoundStateChanged);
     }
 }

@@ -2,7 +2,6 @@ using SimulatorEPL.Events;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace SimulatorEPL
@@ -14,17 +13,29 @@ namespace SimulatorEPL
 
         private readonly Queue<Team> nextStepsScoredTeams = new Queue<Team>();
 
-        private int gameTime;
+        private readonly int matchDuration;
+        private readonly int additionalTimeFirstDuration;
+        private readonly int additionalTimeSecondDuration;
+
+        private int matchCurrentTime;
+        public MatchState State { get; private set; }
+        private int timeCounter;
 
         public Match(Team teamHome, Team teamAway)
         {
             this.teamHome = teamHome;
             this.teamAway = teamAway;
 
+            additionalTimeFirstDuration = Random.Range(0, AppConstants.MaxMatchAdditionalTimeSeconds + 1);
+            additionalTimeSecondDuration = Random.Range(0, AppConstants.MaxMatchAdditionalTimeSeconds + 1);
+            matchDuration = AppConstants.MatchDurationSeconds + additionalTimeFirstDuration + additionalTimeSecondDuration;
+
             RecalculateCoefs();
 
             for (int i = 0; i < 3; i++)
                 AddNextStepScoredTeamOrNull();
+
+            SetState(MatchState.None);
         }
 
         public event Action<int> MatchTimeChanged;
@@ -33,28 +44,35 @@ namespace SimulatorEPL
 
         public int CurrentTime
         {
-            get => gameTime;
+            get => matchCurrentTime;
             private set
             {
                 if (value < 0)
                     return;
 
-                gameTime = value;
-                MatchTimeChanged?.Invoke(gameTime);
+                matchCurrentTime = value;
+                MatchTimeChanged?.Invoke(matchCurrentTime);
             }
         }
 
-        public int MinutesRemaining => AppConstants.RoundDurationSeconds - CurrentTime;
+        public bool IsFinished => State == MatchState.Fulltime;
 
         public Score Score { get; private set; }
 
-        public override string ToString()
+        public int MinutesRemaining => matchDuration - CurrentTime;
+
+        public override string ToString() => $"{teamHome.Title} - {teamAway.Title}";
+
+        public void Start()
         {
-            return $"{teamHome.Title} - {teamAway.Title}";
+            SetState(MatchState.FirstTime);
         }
 
         public void SimulateMinute()
         {
+            if (IsFinished)
+                return;
+
             Team scoredTeam = nextStepsScoredTeams.Dequeue();
 
             if (scoredTeam != null)
@@ -62,13 +80,26 @@ namespace SimulatorEPL
 
             AddNextStepScoredTeamOrNull();
             RecalculateCoefs();
-            CurrentTime++;
-        }
 
-        public void Finish()
-        {
-            CurrentTime = AppConstants.RoundDurationSeconds;
-            RecalculateCoefs();
+            if (State == MatchState.FirstTime && CurrentTime == AppConstants.MatchDurationSeconds / 2)
+            {
+                SetStateNext();
+            }
+            else if (!IsFinished)
+            {
+                if (timeCounter <= 0)
+                {
+                    SetStateNext();
+                    return;
+                }
+                else
+                {
+                    timeCounter--;
+                }
+            }
+
+            if (!IsFinished && State != MatchState.HalfTime && State != MatchState.None)
+                CurrentTime++;
         }
 
         public MatchResult GetGameResultForSide(GameSide side)
@@ -111,6 +142,26 @@ namespace SimulatorEPL
             Messenger<Match, Team>.Broadcast(AppEvent.TeamGoaled, this, scoredTeam);
         }
 
+        private void SetStateNext() => SetState(State + 1);
+
+        private void SetState(MatchState state)
+        {
+            State = state;
+
+            if (state == MatchState.FirstTime || state == MatchState.SecondTime)
+                timeCounter = AppConstants.MatchDurationSeconds / 2;
+            else if (state == MatchState.AdditionalTimeFirst)
+                timeCounter = additionalTimeFirstDuration;
+            else if (state == MatchState.AdditionalTimeSecond)
+                timeCounter = additionalTimeSecondDuration;
+            else if (state == MatchState.HalfTime)
+                timeCounter = AppConstants.HalfTimeDurationSeconds;
+            else if (state == MatchState.Fulltime)
+                RecalculateCoefs();
+
+            Messenger<Match>.Broadcast(AppEvent.MatchStateChanged, this);
+        }
+
         private void RecalculateCoefs()
         {
             double winHome = 0;
@@ -134,7 +185,7 @@ namespace SimulatorEPL
             // Для правой таблицы - RemainingMinuts = Max всегда, для матчей, которые не сыграны
             // Score = 0:0
 
-            for (int i = Score.home; i < Score.home + 5; i++) 
+            for (int i = Score.home; i < Score.home + 5; i++)
             {
                 for (int j = Score.away; j < Score.away + 5; j++)
                     scores.Add(new Score(i, j, GetScoreProb(i, j)));
@@ -181,11 +232,11 @@ namespace SimulatorEPL
             double nextScoreAway = (teamAway.Power - AppConstants.HomeAdvantageCoef) / (teamHome.Power + teamAway.Power);
 
             Coefs = new MatchCoefs(
-                winHome: 0.95f / winHome, 
-                winAway: 0.95f / winAway, 
-                draw: 0.95f / draw, 
+                winHome: 0.95f / winHome,
+                winAway: 0.95f / winAway,
+                draw: 0.95f / draw,
 
-                handyHome: 0.95f / handyHome, 
+                handyHome: 0.95f / handyHome,
                 handyAway: 0.95f / handyAway,
                 handyHomeAvg: handyHomeAvg,
 
@@ -221,12 +272,6 @@ namespace SimulatorEPL
             return probability;
         }
 
-        private BigInteger Factorial(int n)
-        {
-            if (n <= 0)
-                return 1;
-
-            return n * Factorial(n - 1);
-        }
+        private BigInteger Factorial(int n) => n <= 0 ? 1 : n * Factorial(n - 1);
     }
 }

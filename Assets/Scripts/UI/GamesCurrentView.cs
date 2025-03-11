@@ -1,7 +1,5 @@
 using SimulatorEPL.Events;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace SimulatorEPL.UI
@@ -13,25 +11,28 @@ namespace SimulatorEPL.UI
         [SerializeField]
         private MatchView gameViewPrefab;
 
-        private readonly List<MatchView> gameViews = new List<MatchView>();
+        private readonly List<MatchView> matchViews = new List<MatchView>();
 
         private void Awake()
         {
             Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
-            Messenger<Match>.AddListener(AppEvent.MatchStarted, OnGameStarted);
+            Messenger<Match>.AddListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
         }
 
         private void OnDestroy()
         {
             Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
-            Messenger<Match>.RemoveListener(AppEvent.MatchStarted, OnGameStarted);
+            Messenger<Match>.RemoveListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
         }
 
-        private void OnGameStarted(Match game)
+        private void OnMatchStateChanged(Match match)
         {
+            if (match.State != MatchState.FirstTime)
+                return;
+
             MatchView view = Instantiate(gameViewPrefab, viewsHolder);
-            view.Init(game);
-            gameViews.Add(view);
+            view.Init(match);
+            matchViews.Add(view);
             view.SetIsStarted(true);
         }
 
@@ -40,10 +41,10 @@ namespace SimulatorEPL.UI
             if (state != RoundState.None)
                 return;
 
-            foreach (var view in gameViews)
+            foreach (var view in matchViews)
                 Destroy(view.gameObject);
 
-            gameViews.Clear();
+            matchViews.Clear();
         }
     }
 }

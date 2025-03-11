@@ -15,6 +15,13 @@ namespace SimulatorEPL.UI
         private GameSide? targetAttackSide;
         private int currentAttackLevel;
 
+        private Match match;
+
+        public void Init(Match match)
+        {
+            this.match = match;
+        }
+
         public void Simulate()
         {
             if (targetAttackSide.HasValue)
@@ -38,7 +45,7 @@ namespace SimulatorEPL.UI
                 return;
             }
 
-            if (!force && targetAttackSide.HasValue && targetAttackSide != GameSide.None )
+            if (!force && targetAttackSide.HasValue && targetAttackSide != GameSide.None)
             {
                 if ((targetAttackSide.Value == GameSide.Home && currentAttackLevel < 0) || (targetAttackSide.Value == GameSide.Away && currentAttackLevel > 0))
                     currentAttackLevel = 0;
@@ -49,21 +56,24 @@ namespace SimulatorEPL.UI
 
         private void Awake()
         {
-            Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnGameStateChanged);
+            Messenger<Match>.AddListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
         }
 
         private void OnDestroy()
         {
-            Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnGameStateChanged);
+            Messenger<Match>.RemoveListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
         }
 
-        private void OnGameStateChanged(RoundState state)
+        private void OnMatchStateChanged(Match match)
         {
-            if (state == RoundState.FirstTime || state == RoundState.SecondTime)
+            if (this.match == null || this.match != match)
                 return;
 
-            currentAttackLevel = 0;
-            UpdateView();
+            if (match.State == MatchState.None || match.State == MatchState.HalfTime || match.IsFinished)
+            {
+                currentAttackLevel = 0;
+                UpdateView();
+            }
         }
 
         private void AddAttackValue(GameSide attackSide)

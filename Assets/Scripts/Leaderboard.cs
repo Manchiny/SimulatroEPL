@@ -25,9 +25,8 @@ namespace SimulatorEPL.UI
         private void Awake()
         {
             Messenger<Match, Team>.AddListener(AppEvent.TeamGoaled, OnTeamGoaled);
-            Messenger<Match>.AddListener(AppEvent.MatchStarted, OnGameStarted);
-            Messenger<Match>.AddListener(AppEvent.MatchFinished, OnGameFinished);
-            Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnGameStateChanged);
+            Messenger<Match>.AddListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
+            Messenger<RoundState>.AddListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
 
             Init();
         }
@@ -53,9 +52,8 @@ namespace SimulatorEPL.UI
         private void OnDestroy()
         {
             Messenger<Match, Team>.RemoveListener(AppEvent.TeamGoaled, OnTeamGoaled);
-            Messenger<Match>.RemoveListener(AppEvent.MatchStarted, OnGameStarted);
-            Messenger<Match>.RemoveListener(AppEvent.MatchFinished, OnGameFinished);
-            Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnGameStateChanged);
+            Messenger<Match>.RemoveListener(AppEvent.MatchStateChanged, OnMatchStateChanged);
+            Messenger<RoundState>.RemoveListener(AppEvent.RoundStateChanged, OnRoundStateChanged);
         }
 
         private void Init()
@@ -94,18 +92,12 @@ namespace SimulatorEPL.UI
                 var stats = sortedStatistics[i];
                 stats.Place = i + 1;
             }
-
-            //foreach (var view in views)
-            //{
-            //    if (positions.TryGetValue(view.Statistic.Place, out float pos))
-            //        view.SetPositionY(pos);
-            //}
         }
 
-        private void OnTeamGoaled(Match game, Team teamGoaled)
+        private void OnTeamGoaled(Match match, Team teamGoaled)
         {
             TeamStatistic statsGoaledTeam = statistics[teamGoaled];
-            TeamStatistic statsMissedGoalTeam = statistics[game.teamHome == teamGoaled ? game.teamAway : game.teamHome];
+            TeamStatistic statsMissedGoalTeam = statistics[match.teamHome == teamGoaled ? match.teamAway : match.teamHome];
 
             statsGoaledTeam.OnGoal();
             statsMissedGoalTeam.OnMissedGoal();
@@ -113,27 +105,30 @@ namespace SimulatorEPL.UI
             UpdatePlaces();
         }
 
-        private void OnGameStarted(Match game)
+        private void OnMatchStateChanged(Match match)
         {
-            statistics[game.teamHome].OnGameStarted();
-            statistics[game.teamAway].OnGameStarted();
-        }
-
-        private void OnGameFinished(Match game)
-        {
-            statistics[game.teamHome].OnGameFinished(game.GetGameResultForSide(GameSide.Home));
-            statistics[game.teamAway].OnGameFinished(game.GetGameResultForSide(GameSide.Away));
+            if (match.State == MatchState.FirstTime)
+            {
+                statistics[match.teamHome].OnGameStarted();
+                statistics[match.teamAway].OnGameStarted();
+                return;
+            }
+            else if (match.IsFinished)
+            {
+                statistics[match.teamHome].OnGameFinished(match.GetGameResultForSide(GameSide.Home));
+                statistics[match.teamAway].OnGameFinished(match.GetGameResultForSide(GameSide.Away));
+            }
 
             UpdatePlaces();
         }
 
-        private void OnGameStateChanged(RoundState state)
+        private void OnRoundStateChanged(RoundState state)
         {
-            if (state == RoundState.FullTime)
-                GetOutright(teamsDb.Teams, matchMaker.NextMatches);
+            if (state == RoundState.Finished)
+                RecalculateOutrights(teamsDb.Teams, matchMaker.NextMatches);
         }
 
-        private void GetOutright(IReadOnlyList<Team> teams, IReadOnlyList<Match> seasonMatches)
+        private void RecalculateOutrights(IReadOnlyList<Team> teams, IReadOnlyList<Match> seasonMatches)
         {
             var teamsTempPoints = new Dictionary<Team, int>();
             List<Team> sortedTeams = new List<Team>();

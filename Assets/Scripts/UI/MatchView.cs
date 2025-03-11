@@ -33,6 +33,7 @@ namespace SimulatorEPL.UI
         public void Init(Match match)
         {
             Match = match;
+            attackNotifier.Init(match);
 
             teamHomeTitle.text = match.teamHome.Title;
             teamHomeLogo.sprite = match.teamHome.Icon;
