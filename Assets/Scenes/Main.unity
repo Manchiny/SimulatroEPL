@@ -3357,7 +3357,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.3764706}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -6740,6 +6740,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewsHolder: {fileID: 348654078}
   matchViewPrefab: {fileID: 2734625937592993068, guid: f14a91870a1741244ac799b9ec8a34ce, type: 3}
+  roundDivider: {fileID: 1918825267492796547, guid: fc89378e659daf940a72340ee0f0b167, type: 3}
   layoutElement: {fileID: 71605563}
   canvasGroup: {fileID: 71605561}
 --- !u!114 &966490277
@@ -6773,8 +6774,8 @@ MonoBehaviour:
   tabButton1: {fileID: 389641222}
   tabButton2: {fileID: 640886575}
   tabButton3: {fileID: 991731006}
-  gamesCurrentView: {fileID: 966490277}
-  gamesNextView: {fileID: 966490276}
+  matchesCurrentView: {fileID: 966490277}
+  matchesNextView: {fileID: 966490276}
   leaderboard: {fileID: 966490273}
   expressView: {fileID: 966490279}
   allBetsView: {fileID: 966490280}

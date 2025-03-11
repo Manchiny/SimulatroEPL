@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace SimulatorEPL.UI
 {
-    public class GamesCurrentView : MonoBehaviour
+    public class MatchesCurrentView : MonoBehaviour
     {
         [SerializeField]
         private RectTransform viewsHolder;

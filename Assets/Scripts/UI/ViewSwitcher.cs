@@ -14,9 +14,9 @@ namespace SimulatorEPL.UI
         private Button tabButton3;
         [Space]
         [SerializeField]
-        private GamesCurrentView gamesCurrentView;
+        private MatchesCurrentView matchesCurrentView;
         [SerializeField]
-        private GamesNextView gamesNextView;
+        private MatchesNextView matchesNextView;
         [SerializeField]
         private Leaderboard leaderboard;
         [SerializeField]
@@ -38,8 +38,8 @@ namespace SimulatorEPL.UI
 
         private void SetTab(int tab)
         {
-            gamesCurrentView.SetVisible(tab == 1);
-            gamesNextView.SetVisible(tab == 2);
+            matchesCurrentView.SetVisible(tab == 1);
+            matchesNextView.SetVisible(tab == 2);
             expressView.SetVisible(tab == 3);
             allBetsView.SetVisible(tab == 3);
             
