@@ -19,10 +19,8 @@ namespace SimulatorEPL.UI
         [SerializeField]
         private Matchmaker matchMaker;
 
-        private Dictionary<Team, TeamStatistic> statistics = new Dictionary<Team, TeamStatistic>();
-        private List<TeamStatisticsView> views = new List<TeamStatisticsView>();
-
-        private Dictionary<int, float> positions = new Dictionary<int, float>();
+        private readonly Dictionary<Team, TeamStatistic> statistics = new Dictionary<Team, TeamStatistic>();
+        private readonly List<TeamStatisticsView> views = new List<TeamStatisticsView>();
 
         private void Awake()
         {
@@ -50,7 +48,6 @@ namespace SimulatorEPL.UI
                 contentSizeFitter.verticalFit = FitMode.Unconstrained;
                 contentSizeFitter.enabled = false;
             }
-
         }
 
         private void OnDestroy()
@@ -83,9 +80,6 @@ namespace SimulatorEPL.UI
                 tempPositions.Add(view.transform.position.y);
 
             tempPositions = tempPositions.OrderByDescending(position => position).ToList();
-
-            for (int i = 0; i < tempPositions.Count; i++)
-                positions.Add(i + 1, tempPositions[i]);
         }
 
         private void UpdatePlaces()
@@ -171,7 +165,7 @@ namespace SimulatorEPL.UI
                 {
                     Match currentMatch = seasonMatches[matchId];
 
-                    if (1f / currentMatch.Coefs.winHome <= randomNumbers[matchId])
+                    if (1f / currentMatch.Coefs.winHome >= randomNumbers[matchId])
                     {
                         teamsTempPoints[currentMatch.teamHome] += 3;
                     }
